@@ -1,0 +1,19 @@
+{
+    "context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.w3.org/2018/credentials/examples/v1"
+    ],
+    "type": [
+        "VerifiablePresentation"
+    ],
+    "id": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640",
+    "proof": {
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2021-10-18T15:18:52.859030",
+        "proofPurpose": "SignUp",
+        "verificationMethod": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640#VP-Signature",
+        "challenge": "745466ae907f15ab2d0ac1f0221d1a982dde3715ced40a8fb20b489aec88b703",
+        "domain": "https://api.demo.xsl-labs.io/api/v1/auth/vp-signin",
+        "signatureValue": "1c77e01acc92372b1c3463c732c56d52b6105c46d005d01d2c3aa46d512779a4fb731339e459bcaad7cfaae210120334c4c8bc4b77d7492a6be6c447ed01c2c916"
+    }
+}

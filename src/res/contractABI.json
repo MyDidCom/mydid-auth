@@ -1,0 +1,506 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_authenticationKey",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_service",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "identity",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "name",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "validTo",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousChange",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "DIDAttributeChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_issuerIdentity",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_vcIpfsHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "addPublicVC",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_hashVC",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_issuerIdentity",
+        "type": "address"
+      }
+    ],
+    "name": "addVC",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "_hashVCs",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "address",
+        "name": "_issuerIdentity",
+        "type": "address"
+      }
+    ],
+    "name": "addVCs",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "admin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_controller",
+        "type": "address"
+      }
+    ],
+    "name": "changeController",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "uint8",
+        "name": "sigV",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sigR",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sigS",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_controller",
+        "type": "address"
+      }
+    ],
+    "name": "changeControllerSigned",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "changed",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_service",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_authenticationKey",
+        "type": "bytes"
+      }
+    ],
+    "name": "creatDID",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_service",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_authenticationKey",
+        "type": "bytes"
+      }
+    ],
+    "name": "creatDIDForIssuer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      }
+    ],
+    "name": "getDID",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_hashVC",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_issuerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getVCtimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "isIssuer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "nonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "name",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "revokeAttribute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "uint8",
+        "name": "sigV",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sigR",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sigS",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "name",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "revokeAttributeSigned",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "name",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "validity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "setAttribute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_identity",
+        "type": "address"
+      },
+      {
+        "internalType": "uint8",
+        "name": "sigV",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sigR",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "sigS",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "name",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "validity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "setAttributeSigned",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

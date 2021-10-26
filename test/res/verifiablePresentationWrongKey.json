@@ -1,0 +1,45 @@
+{
+    "context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.w3.org/2018/credentials/examples/v1"
+    ],
+    "type": [
+        "VerifiablePresentation",
+        "CredentialManagerPresentation"
+    ],
+    "id": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640",
+    "verifiableCredential": [
+        {
+            "context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://www.w3.org/2018/credentials/examples/v1"
+            ],
+            "type": [
+                "VerifiableCredential"
+            ],
+            "issuer": "did:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be",
+            "issuanceDate": "2021-08-04T10:50:26Z",
+            "wrongCredentialSubject": {
+                "id": "did:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640",
+                "type": "Person",
+                "email": "adutres@mytip.co"
+            },
+            "proof": {
+                "type": "EcdsaSecp256k1Signature2019",
+                "created": "2021-08-04T10:50:26Z",
+                "proofPurpose": "assertionMethod",
+                "verificationMethod": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be#VC-Signature",
+                "signatureValue": "1c94da30a456484e6ede8bf74236d29eb5000db67ad248d7426791fed53d33549728ba14f7c8ab518f1210d70b906bc9da0f918b4fda63a6fd79becb830fdfa911"
+            }
+        }
+    ],
+    "proof": {
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2021-10-18T15:18:28.278296",
+        "proofPurpose": "DIDAuth",
+        "verificationMethod": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640#VP-Signature",
+        "challenge": "3dcebeb7adf9b2a0e8c4419919faa5d6e7f9dd7aa959ef41c63e88f4c3f27ec6",
+        "domain": "https://api.demo.xsl-labs.io/api/v1/auth/vp-signup",
+        "signatureValue": "1bf4a48428954cdb608c7bdec9a3e3d0f29df4daf3e6f57f32f9f6105aa52874b426c95cd3e57ddc85cc4b92cd98080e558f90d8708863f1555f06fdef67ef211e"
+    }
+}
