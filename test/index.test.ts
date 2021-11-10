@@ -7,22 +7,33 @@ import verifiablePresentationWrongSignature from "./res/verifiablePresentationWr
 import verifiablePresentationWrongVCId from "./res/verifiablePresentationWrongVCId.json";
 import verifiablePresentationWrongVCSignature from "./res/verifiablePresentationWrongVCSignature.json";
 
-test("Initialize Web3 provider", async () => {
+// Testing web3 provider initialization
+test("Test incorrect web3 provider initialization", async () => {
   expect.assertions(1);
   try {
-    await mydidAuth.initialize({
+    mydidAuth.initialize({
+      web3GivenProvider:
+        "https://apis-sj.ankr.com/9ff20ecf96c54def988f8c0aea57becf/fa4fde1a75da28a4bbc27c03d6b7589d/binance/full/test",
+      smartContractAddress: "0x6828adf1aED03be429eE42053a4F72CDd3c706",
+    });
+  } catch {
+    expect(true).toBeTruthy();
+  }
+});
+test("Test correct web3 provider initialization", async () => {
+  expect.assertions(1);
+  try {
+    mydidAuth.initialize({
       web3GivenProvider:
         "https://apis-sj.ankr.com/9ff20ecf96c54def988f8c0aea57becf/fa4fde1a75da28a4bbc27c03d6b7589d/binance/full/test",
       smartContractAddress: "0x6828adf1aED03be429eE42053a4F72CDd3c70846",
     });
     expect(true).toBeTruthy();
-  } catch {
-    // should not come here
-  }
+  } catch {}
 });
 
-// Testing VC creation
-test("Test consistency for correct VP with VCs", async () => {
+// Testing VP request creation
+test("Test VP request creation", async () => {
   const result = mydidAuth.createVPRequest(
     "6360c6acfe7951946f0532dcee1d314645312a4b5480d80646ff9241ce68892d",
     "https://mywebiste.com/api/v1/callback",
@@ -42,38 +53,62 @@ test("Test consistency for correct VP with VCs", async () => {
 
 // Testing correct VP with VCs
 test("Test consistency for correct VP with VCs", async () => {
-  const result = mydidAuth.validateVPConsistency(verifiablePresentation);
-  expect(result.validated).toBeTruthy();
+  var validation = false;
+  try {
+    validation = mydidAuth.validateVPConsistency(verifiablePresentation);
+  } catch {}
+  expect(validation).toBeTruthy();
 });
 test("Test authenticity for correct VP with VCs", async () => {
-  const result = await mydidAuth.validateVPAuthenticity(verifiablePresentation);
-  expect(result.validated).toBeTruthy();
+  var validation = false;
+  try {
+    validation = await mydidAuth.validateVPAuthenticity(verifiablePresentation);
+  } catch {}
+  expect(validation).toBeTruthy();
 });
 
 // Testing correct VP without VCs
-test("Test consistency for correct VP with VCs", async () => {
-  const result = mydidAuth.validateVPConsistency(verifiablePresentationWithoutVCs);
-  expect(result.validated).toBeTruthy();
+test("Test consistency for correct VP without VCs", async () => {
+  var validation = false;
+  try {
+    validation = mydidAuth.validateVPConsistency(verifiablePresentationWithoutVCs);
+  } catch {}
+  expect(validation).toBeTruthy();
 });
-test("Test authenticity for correct VP with VCs", async () => {
-  const result = await mydidAuth.validateVPAuthenticity(verifiablePresentationWithoutVCs);
-  expect(result.validated).toBeTruthy();
+test("Test authenticity for correct VP without VCs", async () => {
+  var validation = false;
+  try {
+    validation = await mydidAuth.validateVPAuthenticity(verifiablePresentationWithoutVCs);
+  } catch {}
+  expect(validation).toBeTruthy();
 });
 
 // Testing correct VPs
 test("Test consistency for VP with wrong key", async () => {
-  const result = mydidAuth.validateVPConsistency(verifiablePresentationWrongKey);
-  expect(result.validated).toBeFalsy();
+  var validation = false;
+  try {
+    validation = mydidAuth.validateVPConsistency(verifiablePresentationWrongKey);
+  } catch {}
+  expect(validation).toBeFalsy();
 });
 test("Test consistency for VP with wrong VC id", async () => {
-  const result = mydidAuth.validateVPConsistency(verifiablePresentationWrongVCId);
-  expect(result.validated).toBeFalsy();
+  var validation = false;
+  try {
+    validation = mydidAuth.validateVPConsistency(verifiablePresentationWrongVCId);
+  } catch {}
+  expect(validation).toBeFalsy();
 });
 test("Test authenticity for VP with wrong signature", async () => {
-  const result = await mydidAuth.validateVPAuthenticity(verifiablePresentationWrongSignature);
-  expect(result.validated).toBeFalsy();
+  var validation = false;
+  try {
+    validation = await mydidAuth.validateVPAuthenticity(verifiablePresentationWrongSignature);
+  } catch {}
+  expect(validation).toBeFalsy();
 });
 test("Test authenticity for VP with wrong VC signature", async () => {
-  const result = await mydidAuth.validateVPAuthenticity(verifiablePresentationWrongVCSignature);
-  expect(result.validated).toBeFalsy();
+  var validation = false;
+  try {
+    validation = await mydidAuth.validateVPAuthenticity(verifiablePresentationWrongVCSignature);
+  } catch {}
+  expect(validation).toBeFalsy();
 });

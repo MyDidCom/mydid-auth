@@ -10,12 +10,8 @@ export class Web3Provider {
   abi: AbiItem[] = <AbiItem[]>contractABI;
 
   constructor() {
-    try {
-      this.web3 = new Web3("https://data-seed-prebsc-2-s1.binance.org:8545/");
-      this.contract = new this.web3.eth.Contract(this.abi, "0x6828adf1aED03be429eE42053a4F72CDd3c70846");
-    } catch (e) {
-      console.log(e);
-    }
+    this.web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
+    this.contract = new this.web3.eth.Contract(this.abi, "0x6828adf1aED03be429eE42053a4F72CDd3c70846");
   }
 
   public static getInstance(): Web3Provider {
@@ -26,12 +22,8 @@ export class Web3Provider {
   }
 
   public initialize(provider: string, contractAddress: string): void {
-    try {
-      this.web3 = new Web3(provider);
-      this.contract = new this.web3.eth.Contract(this.abi, contractAddress);
-    } catch (e) {
-      console.log(e);
-    }
+    this.web3 = new Web3(provider);
+    this.contract = new this.web3.eth.Contract(this.abi, contractAddress);
   }
 
   public getContract(): Contract {

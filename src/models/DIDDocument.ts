@@ -8,8 +8,8 @@ export class DIDDocument {
     assertionKey: string,
     authenticationKey: string
   ) {
-    this.address = address.toLowerCase();
-    this.assertionKey = assertionKey.toLowerCase();
-    this.authenticationKey = authenticationKey.toLowerCase();
+    this.address = address;
+    this.assertionKey = assertionKey;
+    this.authenticationKey = authenticationKey;
   }
 }

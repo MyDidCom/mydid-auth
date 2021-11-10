@@ -7,7 +7,7 @@
         "VerifiablePresentation",
         "CredentialManagerPresentation"
     ],
-    "id": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640",
+    "id": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640",
     "verifiableCredential": [
         {
             "context": [
@@ -17,29 +17,52 @@
             "type": [
                 "VerifiableCredential"
             ],
-            "issuer": "did:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be",
-            "issuanceDate": "2021-08-04T10:50:26Z",
+            "issuer": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be",
+            "issuanceDate": "2021-11-10T11:36:09Z",
             "credentialSubject": {
-                "id": "did:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640",
+                "id": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640",
                 "type": "Person",
                 "email": "adutres@mytip.co"
             },
             "proof": {
                 "type": "EcdsaSecp256k1Signature2019",
-                "created": "2021-08-04T10:50:26Z",
+                "created": "2021-11-10T11:36:09Z",
                 "proofPurpose": "assertionMethod",
                 "verificationMethod": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be#VC-Signature",
-                "signatureValue": "1c94da30a456484e6ede8bf74236d29eb5000db67ad248d7426791fed53d33549728ba14f7c8ab518f1210d70b906bc9da0f918b4fda63a6fd79becb830fdfa911"
+                "signatureValue": "1b048f273aae4ef5eae0b5831b515b1b8f685dab46f2ba3309eacb29eadbc920093f406f4628480b5bcceaab004dcc0c70354d99b45491870d644df20624d0164f"
+            }
+        },
+        {
+            "context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://www.w3.org/2018/credentials/examples/v1"
+            ],
+            "type": [
+                "VerifiableCredential"
+            ],
+            "issuer": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be",
+            "issuanceDate": "2021-11-10T11:36:04Z",
+            "credentialSubject": {
+                "id": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640",
+                "type": "Person",
+                "givenName": "Alexandre"
+            },
+            "proof": {
+                "type": "EcdsaSecp256k1Signature2019",
+                "created": "2021-11-10T11:36:05Z",
+                "proofPurpose": "assertionMethod",
+                "verificationMethod": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be#VC-Signature",
+                "signatureValue": "1b754dbea9a648442fce8b9a879b7739ec9c064ac2c755c1431f1f5a347839845a7c36edbb4431c89a2d18cf04ba89d3af25e889788a1332bd221db035dade617c"
             }
         }
     ],
     "proof": {
         "type": "EcdsaSecp256k1Signature2019",
-        "created": "2021-10-18T15:18:28.278296",
+        "created": "2021-11-10T13:16:52.760811",
         "proofPurpose": "DIDAuth",
-        "verificationMethod": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640#VP-Signature",
-        "challenge": "3dcebeb7adf9b2a0e8c4419919faa5d6e7f9dd7aa959ef41c63e88f4c3f27ec6",
-        "domain": "https://api.demo.xsl-labs.io/api/v1/auth/vp-signup",
-        "signatureValue": "1bf4a48428954cdb608c7bdec9a3e3d0f29df4daf3e6f57f32f9f6105aa52874b426c95cd3e57ddc85cc4b92cd98080e558f90d8708863f1555f06fdef67ef211e"
+        "verificationMethod": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640#VP-Signature",
+        "challenge": "5be6ee662a81daf6ca970bb02301b99801d1964ccc51cd73ae9ea04a7394cd0c",
+        "domain": "http://192.168.1.53:5001/api/v1/auth/vp?onlysignup=1",
+        "signatureValue": "1c1bd832a669180c5a7981fc886b887326c680b9d6ac352e3ce84ed3b3090b54de34e861046332fdfdd956bccd9fc3c42a655dc8616a4be902fad6fcf31fefaf8a"
     }
 }

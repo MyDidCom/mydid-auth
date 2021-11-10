@@ -4,30 +4,40 @@ import { recoverAddress } from "../utils/cryptography";
 import { getDIDDocumentForAddress, isIssuerForAddress } from "../utils/contract";
 
 export async function checkVPSignature(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
-  const { proof, ...VPWithoutProof } = verifiablePresentation;
-  const verificationMethod = (
-    await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod))
-  ).address;
-  const document =
-    (verifiablePresentation.verifiableCredential ? JSON.stringify(VPWithoutProof) : "") +
-    proof.domain +
-    proof.challenge;
-  const recoveredAddress = recoverAddress(proof.signatureValue, document);
-  return verificationMethod == recoveredAddress;
+  try {
+    const { proof, ...VPWithoutProof } = verifiablePresentation;
+    const verificationMethod = (await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod))).address;
+    const document =
+      (verifiablePresentation.verifiableCredential ? JSON.stringify(VPWithoutProof) : "") +
+      proof.domain +
+      proof.challenge;
+    const recoveredAddress = recoverAddress(proof.signatureValue, document);
+    return verificationMethod == recoveredAddress;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 }
 
 export async function checkVCSignature(verifiableCredential: VerifiableCredential): Promise<boolean> {
-  const { proof, ...VCWithoutProof } = verifiableCredential;
-  const verificationMethod = (
-    await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod))
-  ).address;
-  const document = JSON.stringify(VCWithoutProof);
-  return verificationMethod == recoverAddress(proof.signatureValue, document);
+  try {
+    const { proof, ...VCWithoutProof } = verifiableCredential;
+    const verificationMethod = (await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod))).address;
+    const document = JSON.stringify(VCWithoutProof);
+    return verificationMethod == recoverAddress(proof.signatureValue, document);
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 }
 
 export async function checkVCIssuer(verifiableCredential: VerifiableCredential): Promise<boolean> {
-  const issuerAddress = cleanAddress(verifiableCredential.issuer);
-  return await isIssuerForAddress(issuerAddress);
+  try {
+    return await isIssuerForAddress(cleanAddress(verifiableCredential.issuer));
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 }
 
 function cleanAddress(DID: string) {

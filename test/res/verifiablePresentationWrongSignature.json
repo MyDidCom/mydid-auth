@@ -6,14 +6,14 @@
     "type": [
         "VerifiablePresentation"
     ],
-    "id": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640",
+    "id": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640",
     "proof": {
         "type": "EcdsaSecp256k1Signature2019",
-        "created": "2021-10-18T15:18:52.859030",
-        "proofPurpose": "SignUp",
-        "verificationMethod": "DID:SDI:0x0d040c04e54a03799e0c907f325d220ca374f640#VP-Signature",
-        "challenge": "745466ae907f15ab2d0ac1f0221d1a982dde3715ced40a8fb20b489aec88b703",
-        "domain": "https://api.demo.xsl-labs.io/api/v1/auth/vp-signin",
-        "signatureValue": "1c77e01acc92372b1e3463c732c56d52b6105c46d005d01d2c3aa46d512779a4fb731339e459bcaad7cfaae210120334c4c8bc4b77d7492a6be6c447ed01c2c916"
+        "created": "2021-11-10T13:18:35.012221",
+        "proofPurpose": "DIDAuth",
+        "verificationMethod": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640#VP-Signature",
+        "challenge": "8045bf57375a1ed251499d5b22d71b6d28fc8127e361eb58ad389df7d94037ff",
+        "domain": "http://192.168.1.53:5001/api/v1/auth/vp?onlysignup=1",
+        "signatureValue": "1cdceac059a1e0a020d22c20d8b6aa8361593c40fd6ad4cfb6b7aa2611aaaca80e4f49b79f5f76570d6b8c2fa46a43b77e820adcae476ac82f255dcbcc84d40f1a"
     }
 }
