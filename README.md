@@ -8,14 +8,13 @@ Install package :
 npm i @xsl-labs/mydid-auth
 ```
 
-&nbsp;
 Import package :
 
 ```javascript
 const mydidAuth = require("@xsl-labs/mydid-auth");
 ```
 
-&nbsp;
+<br/><br/>
 **Initialize with provider and smart contract address :**
 
 _initialize: (config: object)_
@@ -37,7 +36,7 @@ try {
 > - web3GivenProvider: 'https://data-seed-prebsc-1-s1.binance.org:8545/'
 > - smartContractAddress: '0x6828adf1aED03be429eE42053a4F72CDd3c70846'
 
-&nbsp;
+<br/><br/>
 **Create verifiable presentation request :**
 
 _createVPRequest: (challenge: string, domain: string, verifiableCredentials: string[])_
@@ -55,7 +54,7 @@ const VPRequest = mydidAuth.createVPRequest(
 
 > If not verifiable credentials are needed, set verifiableCredentials to an empty array.
 
-&nbsp;
+<br/><br/>
 **Validate consistency of verifiable presentation :**
 
 _validateVPConsistency: (VPData: object)_
@@ -69,7 +68,7 @@ try {
 }
 ```
 
-&nbsp;
+<br/><br/>
 **Validate authenticity of verifiable presentation :**
 
 _validateVPAuthenticity: async (VPData: object)_
