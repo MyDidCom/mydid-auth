@@ -1,18 +1,20 @@
 import { VerifiablePresentation } from "../models/VerifiablePresentation";
 import { VerifiableCredential } from "../models/VerifiableCredential";
-import { recoverAddress } from "../utils/cryptography";
+import { recoverAddress, recoverTypedSignatureV4 } from "../utils/cryptography";
 import { getDIDDocumentForAddress, isIssuerForAddress } from "../utils/contract";
 
 export async function checkVPSignature(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
   try {
     const { proof, ...VPWithoutProof } = verifiablePresentation;
-    const verificationMethod = (await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod))).address;
+    const signerDidDocument = await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod));
+    if (!signerDidDocument || !signerDidDocument.address)
+      throw "Can't retrieve signer did document (checking VC signature)";
     const document =
       (verifiablePresentation.verifiableCredential ? JSON.stringify(VPWithoutProof) : "") +
       proof.domain +
       proof.challenge;
     const recoveredAddress = recoverAddress(proof.signatureValue, document);
-    return verificationMethod == recoveredAddress;
+    return recoveredAddress == signerDidDocument.address;
   } catch (e) {
     console.log(e);
     return false;
@@ -22,9 +24,18 @@ export async function checkVPSignature(verifiablePresentation: VerifiablePresent
 export async function checkVCSignature(verifiableCredential: VerifiableCredential): Promise<boolean> {
   try {
     const { proof, ...VCWithoutProof } = verifiableCredential;
-    const verificationMethod = (await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod))).address;
-    const document = JSON.stringify(VCWithoutProof);
-    return verificationMethod == recoverAddress(proof.signatureValue, document);
+    const signerDidDocument = await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod));
+    if (!signerDidDocument || !signerDidDocument.address)
+      throw "Can't retrieve signer did document (checking VC signature)";
+
+    let recoveredAddress = "";
+    if (proof.type == "eth_signTypedData_v4") {
+      recoveredAddress = recoverTypedSignatureV4(VCWithoutProof, proof.signatureValue);
+    } else if (proof.type == "EcdsaSecp256k1Signature2019") {
+      recoveredAddress == recoverAddress(proof.signatureValue, JSON.stringify(VCWithoutProof));
+    }
+
+    return recoveredAddress == signerDidDocument.address;
   } catch (e) {
     console.log(e);
     return false;

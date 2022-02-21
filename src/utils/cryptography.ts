@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import { BinaryToTextEncoding } from "crypto";
 import { Web3Provider } from "../web3Provider";
+import { toChecksumAddress } from "ethereum-checksum-address";
+import { recoverTypedSignature, TypedMessage, MessageTypes, SignTypedDataVersion } from "@metamask/eth-sig-util";
 
 export function recoverAddress(signature: string, document: string): string {
   const messageHash = hashSHA256(document);
@@ -17,5 +19,77 @@ export function hashSHA256(message: string): string {
       .createHash("sha256")
       .update(message)
       .digest("hex" as BinaryToTextEncoding)
+  );
+}
+
+export function recoverTypedSignatureV4(vc: object, signature: string) {
+  const typedData = {
+    domain: {
+      chainId: 97,
+      name: "myDid",
+      verifyingContract: "0x7e52a123ed6db6ac872a875552935fbbd2544c86",
+      version: "1",
+    },
+    message: vc,
+    primaryType: "VerifiableCredential",
+    types: {
+      EIP712Domain: [
+        {
+          name: "name",
+          type: "string",
+        },
+        {
+          name: "version",
+          type: "string",
+        },
+        {
+          name: "chainId",
+          type: "uint256",
+        },
+        {
+          name: "verifyingContract",
+          type: "address",
+        },
+      ],
+      VerifiableCredential: [
+        {
+          name: "@context",
+          type: "string[]",
+        },
+        {
+          name: "type",
+          type: "string[]",
+        },
+        {
+          name: "issuer",
+          type: "string",
+        },
+        {
+          name: "issuanceDate",
+          type: "string",
+        },
+        {
+          name: "credentialSubject",
+          type: "CredentialSubject",
+        },
+      ],
+      CredentialSubject: [
+        {
+          name: "type",
+          type: "string",
+        },
+        {
+          name: "id",
+          type: "string",
+        },
+      ],
+    },
+  };
+  return toChecksumAddress(
+    recoverTypedSignature({
+      data: typedData as TypedMessage<MessageTypes>,
+      signature: signature,
+      version: SignTypedDataVersion.V4,
+    })
   );
 }

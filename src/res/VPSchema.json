@@ -33,7 +33,7 @@
         {
           "type": "object",
           "properties": {
-            "context": {
+            "@context": {
               "type": "array",
               "items": [
                 {
@@ -102,7 +102,7 @@
             }
           },
           "required": [
-            "context",
+            "@context",
             "type",
             "issuer",
             "issuanceDate",

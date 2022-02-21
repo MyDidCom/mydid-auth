@@ -1,6 +1,6 @@
 {
   "name": "@xsl-labs/mydid-auth",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Typescript module for mydid authentication",
   "files": [
     "/dist"
@@ -30,7 +30,9 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
+    "@metamask/eth-sig-util": "^4.0.0",
     "ajv": "^8.6.3",
+    "ethereum-checksum-address": "^0.0.7",
     "web3": "^1.6.0"
   }
 }
