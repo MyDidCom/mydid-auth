@@ -13,7 +13,7 @@ test("Test incorrect web3 provider initialization", async () => {
   try {
     mydidAuth.initialize({
       web3GivenProvider:
-        "https://apis-sj.ankr.com/9ff20ecf96c54def988f8c0aea57becf/fa4fde1a75da28a4bbc27c03d6b7589d/binance/full/test",
+        "https://speedy-nodes-nyc.moralis.io/a1bd8f4ffec864c4024bb9f2/bsc/testnet",
       smartContractAddress: "0x6828adf1aED03be429eE42053a4F72CDd3c706",
     });
   } catch {
@@ -25,7 +25,7 @@ test("Test correct web3 provider initialization", async () => {
   try {
     mydidAuth.initialize({
       web3GivenProvider:
-        "https://apis-sj.ankr.com/9ff20ecf96c54def988f8c0aea57becf/fa4fde1a75da28a4bbc27c03d6b7589d/binance/full/test",
+        "https://speedy-nodes-nyc.moralis.io/a1bd8f4ffec864c4024bb9f2/bsc/testnet",
       smartContractAddress: "0x6828adf1aED03be429eE42053a4F72CDd3c70846",
     });
     expect(true).toBeTruthy();
