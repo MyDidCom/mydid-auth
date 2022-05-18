@@ -25,7 +25,7 @@ export function hashSHA256(message: string): string {
 export function recoverTypedSignatureV4(vc: object, signature: string) {
   const typedData = {
     domain: {
-      chainId: 97,
+      chainId: 56,
       name: "myDid",
       verifyingContract: "0x7e52a123ed6db6ac872a875552935fbbd2544c86",
       version: "1",
