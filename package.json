@@ -1,5 +1,5 @@
 {
-  "name": "@xsl-labs/mydid-auth",
+  "name": "@mydidcom/mydid-auth",
   "version": "0.0.9",
   "description": "Typescript module for mydid authentication",
   "files": [
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/XSL-Labs/mydid-auth.git"
+    "url": "https://github.com/MyDidCom/mydid-auth.git"
   },
   "main": "dist/index.js",
   "scripts": {
