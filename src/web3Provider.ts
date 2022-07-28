@@ -8,6 +8,7 @@ export class Web3Provider {
   web3: Web3;
   contract: Contract;
   abi: AbiItem[] = <AbiItem[]>contractABI;
+  chainId: Number;
 
   constructor() {
     this.web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
@@ -24,9 +25,14 @@ export class Web3Provider {
   public initialize(provider: string, contractAddress: string): void {
     this.web3 = new Web3(provider);
     this.contract = new this.web3.eth.Contract(this.abi, contractAddress);
+    this.web3.eth.getChainId().then((providerChainId) => (this.chainId = providerChainId));
   }
 
   public getContract(): Contract {
     return this.contract;
+  }
+
+  public getChainId(): Number {
+    return this.chainId;
   }
 }
