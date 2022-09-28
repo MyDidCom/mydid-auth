@@ -13,7 +13,7 @@ test("Test incorrect web3 provider initialization", async () => {
   try {
     mydidAuth.initialize({
       web3GivenProvider:
-        "https://speedy-nodes-nyc.moralis.io/a1bd8f4ffec864c4024bb9f2/bsc/testnet",
+        "https://data-seed-prebsc-1-s1.binance.org:8545",
       smartContractAddress: "0x6828adf1aED03be429eE42053a4F72CDd3c706",
     });
   } catch {
@@ -25,7 +25,7 @@ test("Test correct web3 provider initialization", async () => {
   try {
     mydidAuth.initialize({
       web3GivenProvider:
-        "https://speedy-nodes-nyc.moralis.io/a1bd8f4ffec864c4024bb9f2/bsc/testnet",
+        "https://data-seed-prebsc-1-s1.binance.org:8545",
       smartContractAddress: "0x6828adf1aED03be429eE42053a4F72CDd3c70846",
     });
     expect(true).toBeTruthy();

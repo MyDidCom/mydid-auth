@@ -5,13 +5,13 @@
 Install package :
 
 ```shell
-npm i @xsl-labs/mydid-auth
+npm i @mydidcom/mydid-auth
 ```
 
 Import package :
 
 ```javascript
-const mydidAuth = require("@xsl-labs/mydid-auth");
+const mydidAuth = require("@mydidcom/mydid-auth");
 ```
 
 <br/><br/>

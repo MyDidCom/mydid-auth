@@ -34,6 +34,6 @@
     "ajv": "^8.6.3",
     "ethereum-checksum-address": "^0.0.8",
     "keccak": "^3.0.2",
-    "web3": "^1.7.4"
+    "web3": "^1.8.0"
   }
 }

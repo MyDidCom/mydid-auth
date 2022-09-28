@@ -3,18 +3,25 @@ import { VerifiableCredential } from "../models/VerifiableCredential";
 import { recoverAddress, recoverTypedSignatureV4 } from "../utils/cryptography";
 import { getDIDDocumentForAddress, isIssuerForAddress } from "../utils/contract";
 
-export async function checkVPSignature(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
+export async function checkVPSignature(
+  verifiablePresentation: VerifiablePresentation,
+  checkDidDocumentForVP: Boolean
+): Promise<boolean> {
+  console.log("checkDidDocumentForVP", checkDidDocumentForVP);
   try {
     const { proof, ...VPWithoutProof } = verifiablePresentation;
-    const signerDidDocument = await getDIDDocumentForAddress(cleanAddress(proof.verificationMethod));
-    if (!signerDidDocument || !signerDidDocument.address)
-      throw "Can't retrieve signer did document (checking VC signature)";
+    const identityAddress = cleanAddress(proof.verificationMethod);
+    if (checkDidDocumentForVP) {
+      const signerDidDocument = await getDIDDocumentForAddress(identityAddress);
+      if (!signerDidDocument || !signerDidDocument.address)
+        throw "Can't retrieve signer did document (checking VP signature)";
+    }
     const document =
       (verifiablePresentation.verifiableCredential ? JSON.stringify(VPWithoutProof) : "") +
       proof.domain +
       proof.challenge;
     const recoveredAddress = recoverAddress(proof.signatureValue, document);
-    return recoveredAddress == signerDidDocument.address;
+    return recoveredAddress == identityAddress;
   } catch (e) {
     console.log(e);
     return false;

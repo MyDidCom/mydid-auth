@@ -4,9 +4,14 @@ import { VerifiablePresentation } from "./models/VerifiablePresentation";
 import { isVerifiablePresentationSchema } from "./utils/schema";
 import { checkVPSignature, checkVCSignature, checkVCIssuer } from "./utils/verifications";
 
+var checkDidDocumentForVP = true;
+
 const mydidAuth = {
   initialize: (config: object): void => {
+    console.log("config", config);
+    console.log("config.hasOwnProperty('checkDidDocumentForVP')", config.hasOwnProperty("checkDidDocumentForVP"));
     Web3Provider.getInstance().initialize(config["web3GivenProvider"], config["smartContractAddress"]);
+    if (config.hasOwnProperty("checkDidDocumentForVP")) checkDidDocumentForVP = config["checkDidDocumentForVP"];
   },
 
   createVPRequest: (challenge: string, domain: string, verifiableCredentials: string[]) => {
@@ -38,7 +43,7 @@ const mydidAuth = {
       }
     }
 
-    if (!(await checkVPSignature(verifiablePresentation))) throw "Incorrect VP signature";
+    if (!(await checkVPSignature(verifiablePresentation, checkDidDocumentForVP))) throw "Incorrect VP signature";
 
     return true;
   },
