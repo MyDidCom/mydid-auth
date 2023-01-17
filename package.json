@@ -1,6 +1,6 @@
 {
   "name": "@mydidcom/mydid-auth",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Typescript module for mydid authentication",
   "files": [
     "/dist"
