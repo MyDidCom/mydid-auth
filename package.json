@@ -33,6 +33,8 @@
     "@metamask/eth-sig-util": "^4.0.0",
     "ajv": "^8.6.3",
     "ethereum-checksum-address": "^0.0.8",
+    "http": "^0.0.1-security",
+    "https": "^1.0.0",
     "keccak": "^3.0.2",
     "web3": "^1.8.0"
   }

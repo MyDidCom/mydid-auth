@@ -8,8 +8,6 @@ var checkDidDocumentForVP = true;
 
 const mydidAuth = {
   initialize: (config: object): void => {
-    console.log("config", config);
-    console.log("config.hasOwnProperty('checkDidDocumentForVP')", config.hasOwnProperty("checkDidDocumentForVP"));
     Web3Provider.getInstance().initialize(config["web3GivenProvider"], config["smartContractAddress"]);
     if (config.hasOwnProperty("checkDidDocumentForVP")) checkDidDocumentForVP = config["checkDidDocumentForVP"];
   },

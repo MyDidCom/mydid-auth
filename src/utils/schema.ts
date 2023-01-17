@@ -1,5 +1,5 @@
-import Ajv from "ajv";
-import VPSchema from "../res/VPSchema.json";
+import Ajv from 'ajv';
+import VPSchema from '../res/VPSchema.json';
 
 const ajv = new Ajv({ strict: false, allErrors: true });
 
