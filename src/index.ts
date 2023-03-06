@@ -33,7 +33,9 @@ const mydidAuth = {
 
     await Promise.all([
       verifyVerifiablePresentation(verifiablePresentation),
-      ...verifiablePresentation.verifiableCredential.map((vc) => verifyVerifiableCredential(vc)),
+      ...(verifiablePresentation.verifiableCredential
+        ? verifiablePresentation.verifiableCredential.map((vc) => verifyVerifiableCredential(vc))
+        : []),
     ]);
 
     return true;
