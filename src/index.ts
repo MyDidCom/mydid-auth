@@ -4,16 +4,19 @@ import { VerifiablePresentation } from './models/VerifiablePresentation';
 import { isVerifiablePresentationSchema } from './utils/schema';
 import { verifyVerifiablePresentation, verifyVerifiableCredential } from './utils/verifications';
 
+let authorizeVpSignedByIssuer = false;
+
 const mydidAuth = {
   initialize: (config: object): void => {
     Web3Provider.getInstance().initialize(config['web3GivenProvider'], config['smartContractAddress']);
+    authorizeVpSignedByIssuer = config['authorizeVpSignedByIssuer'];
   },
 
   createVPRequest: (challenge: string, domain: string, verifiableCredentials: string[]) => {
     return new VerifiablePresentationRequest(challenge, domain, verifiableCredentials);
   },
 
-  validateVPConsistency: (VPData: object): object => {
+  validateVPConsistency: (VPData: object): void => {
     if (!isVerifiablePresentationSchema(VPData)) throw 'Incorrect format for verifiable presentation';
 
     const verifiablePresentation: VerifiablePresentation = VPData as VerifiablePresentation;
@@ -32,16 +35,16 @@ const mydidAuth = {
       }
     }
 
-    if (!vpSignerIsReceiver && !vpSignerIsSender) throw `Incorrect signer for verifiable presentation`;
+    if (
+      (authorizeVpSignedByIssuer && !vpSignerIsReceiver && !vpSignerIsSender) ||
+      (!authorizeVpSignedByIssuer && !vpSignerIsReceiver)
+    )
+      throw `Incorrect signer for verifiable presentation`;
 
-    return {
-      status: 'validated',
-      vpSignerIsReceiver,
-      vpSignerIsSender,
-    };
+    return;
   },
 
-  validateVPAuthenticity: async (VPData: object): Promise<object> => {
+  validateVPAuthenticity: async (VPData: object): Promise<void> => {
     var verifiablePresentation: VerifiablePresentation = VPData as VerifiablePresentation;
 
     await Promise.all([
@@ -51,9 +54,7 @@ const mydidAuth = {
         : []),
     ]);
 
-    return {
-      status: 'validated',
-    };
+    return;
   },
 };
 
