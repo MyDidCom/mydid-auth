@@ -31,6 +31,12 @@
     "appBundleId": {
       "type": "string"
     },
+    "authenticationKey": {
+      "type": "string"
+    },
+    "cryptoAddress": {
+      "type": "string"
+    },
     "verifiableCredential": {
       "type": "array",
       "items": {
