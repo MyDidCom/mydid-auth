@@ -26,12 +26,12 @@
     },
     "id": {
       "type": "string",
-      "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}$"
+      "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
     },
     "appBundleId": {
       "type": "string"
     },
-    "authenticationKey": {
+    "authenticationPubKey": {
       "type": "string"
     },
     "cryptoAddress": {
@@ -75,7 +75,7 @@
               },
               "issuer": {
                 "type": "string",
-                "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}$"
+                "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
               },
               "issuanceDate": {
                 "type": "string",
@@ -87,7 +87,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}$"
+                    "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
                   },
                   "type": {
                     "type": "string"
@@ -127,7 +127,7 @@
                   },
                   "verificationMethod": {
                     "type": "string",
-                    "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}#(.+)$"
+                    "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                   },
                   "proofValue": {
                     "type": "string"
@@ -346,7 +346,7 @@
                           },
                           "verificationMethod": {
                             "type": "string",
-                            "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}#(.+)$"
+                            "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                           },
                           "proofValue": {
                             "type": "string"
@@ -482,7 +482,7 @@
                   },
                   "verificationMethod": {
                     "type": "string",
-                    "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}#(.+)$"
+                    "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                   },
                   "proofValue": {
                     "type": "string"
@@ -644,7 +644,7 @@
                   },
                   "verificationMethod": {
                     "type": "string",
-                    "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}#(.+)$"
+                    "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                   },
                   "proofValue": {
                     "type": "string"
@@ -702,7 +702,7 @@
         },
         "verificationMethod": {
           "type": "string",
-          "pattern": "^(DID|did):(SDI|sdi):0x[a-fA-F0-9]{40}#(.+)$"
+          "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
         },
         "signatureValue": {
           "type": "string"

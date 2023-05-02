@@ -1,13 +1,14 @@
 import { VerifiablePresentation } from '../models/VerifiablePresentation';
 import { VerifiableCredential, Issuer } from '../models/VerifiableCredential';
 import { VerificationMethod } from '../models/VerificationMethod';
-import { recoverAddress, recoverEip712TypedSignatureV4 } from '../utils/cryptography';
+import { recoverAddress, recoverEip712TypedSignatureV4, didToAddress } from '../utils/cryptography';
 import { isIssuerForAddress, isP2PBadgeTemplate } from '../utils/contract';
 import { getJsonDataFromUrl } from '../utils/http';
 import { Web3Provider } from '../web3Provider';
 import bs58 from 'bs58';
 
 const RESOLVER_URL = 'https://resolver.mydid.eu/1.0/identifiers/';
+const selfSignedVCs = ['pseudo', 'walletAddress', 'publicKey'];
 
 export async function verifyVerifiablePresentation(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
   const { proof, ...VPWithoutProof } = verifiablePresentation;
@@ -69,9 +70,11 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
   // Verify VC sender is VC signer
   if (
     !(
-      verifiableCredential.proof.verificationMethod.split('#')[0] == verifiableCredential.issuer ||
-      verifiableCredential.proof.verificationMethod.split('#')[0] ==
-        (verifiableCredential.issuer as Issuer).id.split('#')[0]
+      (typeof verifiableCredential.issuer === 'string' &&
+        didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) ==
+          didToAddress(verifiableCredential.issuer)) ||
+      didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) ==
+        didToAddress((verifiableCredential.issuer as Issuer).id.split('#')[0])
     )
   ) {
     throw `Sender and signer are different in VC`;
@@ -79,7 +82,7 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
 
   await Promise.all([
     // Verify VC signature
-    new Promise(async (resolve) => {
+    new Promise(async (resolve, reject) => {
       // Retrieve signer address from DID document
       let signerAddress: string = null;
 
@@ -92,7 +95,7 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
       if (method.type == 'EcdsaSecp256k1RecoveryMethod2020') {
         signerAddress = method.blockchainAccountId.split(':')[2];
       }
-      if (!signerAddress) throw `Can't retrieve address from resolver`;
+      if (!signerAddress) reject(`Can't retrieve address from resolver`);
 
       // Verify proof signature
       let recoveredAddress: string = null;
@@ -101,14 +104,24 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
       } else if (proof.type == 'EthereumEip712Signature2021') {
         recoveredAddress = await recoverEip712TypedSignatureV4(verifiableCredential);
       }
-      if (recoveredAddress != signerAddress) throw 'Bad signature for verifiable credential';
+      if (recoveredAddress != signerAddress) reject('Bad signature for verifiable credential');
+
+      // For self-signed - verify credentialSubject id is issuer
+      if (
+        type == 'VerifiableCredential' &&
+        verifiableCredential.credentialSubject.hasOwnProperty('award') &&
+        selfSignedVCs.indexOf(verifiableCredential.credentialSubject['award'].split(';')[0]) != -1
+      ) {
+        if (signerAddress != didToAddress(verifiableCredential.credentialSubject.id)) {
+          reject('Self-signed vc is not valid');
+        }
+      }
+
       resolve({});
     }),
     // Get sender role
     new Promise(async (resolve) => {
-      isIssuer = await isIssuerForAddress(
-        verifiableCredential.proof.verificationMethod.split('#')[0].replace('DID:SDI:', '')
-      );
+      isIssuer = await isIssuerForAddress(didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]));
       resolve({});
     }),
     // Get P2P info
@@ -156,12 +169,24 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
   // Validate badge issuer
   if (['EndorsementCredential', 'OpenBadgeCredential'].indexOf(type) != -1 && !isP2P) {
     if (!isIssuer) throw `Badge issued by a non-issuer`;
-    if (templateData.issuerDID.split('#')[0] != verifiableCredential.proof.verificationMethod.split('#')[0])
+    if (
+      didToAddress(templateData.issuerDID.split('#')[0]) !=
+      didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0])
+    )
       throw `Issuer doesn't own badge template`;
   }
 
   // Validate VC issuer
-  if (type == 'VerifiableCredential' && !isIssuer) throw `VC issued by a non-issuer`;
+  if (
+    type == 'VerifiableCredential' &&
+    !isIssuer &&
+    !(
+      verifiableCredential.credentialSubject.hasOwnProperty('award') &&
+      selfSignedVCs.indexOf(verifiableCredential.credentialSubject['award'].split(';')[0]) != -1
+    )
+  ) {
+    throw `VC issued by a non-issuer`;
+  }
 
   return;
 }

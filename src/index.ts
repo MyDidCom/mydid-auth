@@ -3,6 +3,7 @@ import { VerifiablePresentationRequest } from './models/VerifiablePresentationRe
 import { VerifiablePresentation } from './models/VerifiablePresentation';
 import { isVerifiablePresentationSchema } from './utils/schema';
 import { verifyVerifiablePresentation, verifyVerifiableCredential } from './utils/verifications';
+import { didToAddress } from './utils/cryptography';
 
 let authorizeVpSignedByIssuer = false;
 
@@ -26,10 +27,11 @@ const mydidAuth = {
 
     if (verifiablePresentation.verifiableCredential) {
       for (const verifiableCredential of verifiablePresentation.verifiableCredential) {
-        if (verifiableCredential.credentialSubject.id != verifiablePresentation.id) vpSignerIsReceiver = false;
+        if (didToAddress(verifiableCredential.credentialSubject.id) != didToAddress(verifiablePresentation.id))
+          vpSignerIsReceiver = false;
         if (
-          verifiableCredential.proof.verificationMethod.split('#')[0] !=
-          verifiablePresentation.proof.verificationMethod.split('#')[0]
+          didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) !=
+          didToAddress(verifiablePresentation.proof.verificationMethod.split('#')[0])
         )
           vpSignerIsSender = false;
       }

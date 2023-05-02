@@ -11,8 +11,8 @@ export class Web3Provider {
   chainId: Number;
 
   constructor() {
-    this.web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545/");
-    this.contract = new this.web3.eth.Contract(this.abi, "0x6828adf1aED03be429eE42053a4F72CDd3c70846");
+    this.web3 = new Web3("https://bsc-dataseed1.binance.org/");
+    this.contract = new this.web3.eth.Contract(this.abi, "0xc9F89E14B8b21A21e9359299047d333BFC6EFEb3");
   }
 
   public static getInstance(): Web3Provider {
