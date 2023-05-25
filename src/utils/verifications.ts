@@ -1,14 +1,14 @@
 import { VerifiablePresentation } from '../models/VerifiablePresentation';
 import { VerifiableCredential, Issuer } from '../models/VerifiableCredential';
 import { VerificationMethod } from '../models/VerificationMethod';
-import { recoverAddress, recoverEip712TypedSignatureV4, didToAddress } from '../utils/cryptography';
+import { recoverAddress, recoverEip712TypedSignatureV4, didToAddress, base58btcToHex } from '../utils/cryptography';
 import { isIssuerForAddress, isP2PBadgeTemplate } from '../utils/contract';
 import { getJsonDataFromUrl } from '../utils/http';
 import { Web3Provider } from '../web3Provider';
 import bs58 from 'bs58';
 
 const RESOLVER_URL = 'https://resolver.mydid.eu/1.0/identifiers/';
-const selfSignedVCs = ['pseudo', 'walletAddress', 'publicKey'];
+const selfSignedVCs = ['pseudo', 'walletAddress', 'publicKey', 'did'];
 
 export async function verifyVerifiablePresentation(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
   const { proof, ...VPWithoutProof } = verifiablePresentation;
@@ -22,9 +22,13 @@ export async function verifyVerifiablePresentation(verifiablePresentation: Verif
   const method: VerificationMethod = (await getJsonDataFromUrl(
     `${RESOLVER_URL}${did}?tag=${tag}${testnet ? '&network=testnet' : ''}`
   )) as VerificationMethod;
-  if (method.type == 'EcdsaSecp256k1RecoveryMethod2020') {
+
+  if (method.blockchainAccountId) {
     signerAddress = method.blockchainAccountId.split(':')[2];
+  } else if (method.publicKeyMultibase) {
+    signerAddress = base58btcToHex(method.publicKeyMultibase);
   }
+
   if (!signerAddress) throw `Can't retrieve address from resolver`;
 
   // Verify proof signature
@@ -92,9 +96,12 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
       const method: VerificationMethod = (await getJsonDataFromUrl(
         `${RESOLVER_URL}${did}?tag=${tag}${testnet ? '&network=testnet' : ''}`
       )) as VerificationMethod;
-      if (method.type == 'EcdsaSecp256k1RecoveryMethod2020') {
+      if (method.blockchainAccountId) {
         signerAddress = method.blockchainAccountId.split(':')[2];
+      } else if (method.publicKeyMultibase) {
+        signerAddress = base58btcToHex(method.publicKeyMultibase);
       }
+
       if (!signerAddress) reject(`Can't retrieve address from resolver`);
 
       // Verify proof signature

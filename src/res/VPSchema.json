@@ -25,6 +25,8 @@
       }
     },
     "id": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DID schema",
       "type": "string",
       "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
     },
@@ -42,6 +44,7 @@
       "items": {
         "anyOf": [
           {
+            "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
             "title": "Verifiable Credential V1 schema",
             "required": [
@@ -74,31 +77,75 @@
                 }
               },
               "issuer": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "DID schema",
                 "type": "string",
                 "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
               },
               "issuanceDate": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Datetime schema",
                 "type": "string",
                 "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
               },
               "credentialSubject": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Credential subject schema",
                 "type": "object",
-                "required": ["id", "type", "image"],
+                "required": ["id", "type"],
                 "properties": {
                   "id": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "DID schema",
                     "type": "string",
                     "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
                   },
                   "type": {
                     "type": "string"
                   },
+                  "name": {
+                    "type": "string"
+                  },
                   "image": {
                     "type": "string"
+                  },
+                  "endorsementComment": {
+                    "type": "string"
+                  },
+                  "achievement": {
+                    "type": "object",
+                    "required": ["id", "type", "criteria", "description", "name"],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "criteria": {
+                        "type": "object",
+                        "properties": {
+                          "narrative": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["narrative"],
+                        "additionalItems": false
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
                   }
-                },
-                "additionalProperties": true
+                }
               },
               "credentialSchema": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Credential schema schema",
                 "type": "object",
                 "required": ["id", "type"],
                 "properties": {
@@ -112,7 +159,9 @@
                 "additionalProperties": false
               },
               "proof": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
+                "title": "EIP 712 proof schema",
                 "required": ["type", "created", "proofPurpose", "verificationMethod", "proofValue", "eip712"],
                 "properties": {
                   "type": {
@@ -122,10 +171,14 @@
                     "type": "string"
                   },
                   "created": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "Datetime schema",
                     "type": "string",
                     "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
                   },
                   "verificationMethod": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "verificationMethod schema",
                     "type": "string",
                     "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                   },
@@ -154,8 +207,7 @@
                         "required": ["name", "chainId", "version"]
                       },
                       "primaryType": {
-                        "type": "string",
-                        "enum": ["VerifiableCredential"]
+                        "type": "string"
                       }
                     },
                     "required": ["messageDataEip712Schema", "domain", "primaryType"]
@@ -167,6 +219,7 @@
             "additionalProperties": false
           },
           {
+            "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
             "title": "OpenBadge V3 schema",
             "required": [
@@ -212,6 +265,8 @@
                 }
               },
               "issuer": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Issuer schema",
                 "type": "object",
                 "required": ["id", "type"],
                 "properties": {
@@ -225,7 +280,9 @@
                     "type": "string"
                   },
                   "endorsement": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
                     "type": "object",
+                    "title": "Endorsement OpenBadge V3 schema",
                     "required": [
                       "@context",
                       "mVersion",
@@ -268,6 +325,8 @@
                         }
                       },
                       "issuer": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Issuer schema",
                         "type": "object",
                         "required": ["id", "type", "name"],
                         "properties": {
@@ -287,36 +346,85 @@
                         "type": "string"
                       },
                       "templateHash": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Hash schema",
                         "type": "string",
                         "pattern": "^0x[a-fA-F0-9]{64}"
                       },
                       "issuanceDate": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Datetime schema",
                         "type": "string",
                         "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
                       },
                       "expirationDate": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Datetime schema",
                         "type": "string",
                         "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
                       },
                       "credentialSubject": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Credential subject schema",
                         "type": "object",
                         "required": ["id", "type", "endorsementComment"],
                         "properties": {
                           "id": {
-                            "type": "string"
+                            "$schema": "http://json-schema.org/draft-07/schema#",
+                            "title": "DID schema",
+                            "type": "string",
+                            "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
                           },
                           "type": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "image": {
                             "type": "string"
                           },
                           "endorsementComment": {
                             "type": "string"
                           },
-                          "additionalProperties": false
+                          "achievement": {
+                            "type": "object",
+                            "required": ["id", "type", "criteria", "description", "name"],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "criteria": {
+                                "type": "object",
+                                "properties": {
+                                  "narrative": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["narrative"],
+                                "additionalItems": false
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
                         }
                       },
                       "credentialSchema": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "title": "Credential schema array schema",
                         "type": "array",
                         "items": {
+                          "$schema": "http://json-schema.org/draft-07/schema#",
+                          "title": "Credential schema schema",
                           "type": "object",
                           "required": ["id", "type"],
                           "properties": {
@@ -331,7 +439,9 @@
                         }
                       },
                       "proof": {
+                        "$schema": "http://json-schema.org/draft-07/schema#",
                         "type": "object",
+                        "title": "EIP 712 proof schema",
                         "required": ["type", "created", "proofPurpose", "verificationMethod", "proofValue", "eip712"],
                         "properties": {
                           "type": {
@@ -341,10 +451,14 @@
                             "type": "string"
                           },
                           "created": {
+                            "$schema": "http://json-schema.org/draft-07/schema#",
+                            "title": "Datetime schema",
                             "type": "string",
                             "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
                           },
                           "verificationMethod": {
+                            "$schema": "http://json-schema.org/draft-07/schema#",
+                            "title": "verificationMethod schema",
                             "type": "string",
                             "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                           },
@@ -373,8 +487,7 @@
                                 "required": ["name", "chainId", "version"]
                               },
                               "primaryType": {
-                                "type": "string",
-                                "enum": ["EndorsementCredential"]
+                                "type": "string"
                               }
                             },
                             "required": ["messageDataEip712Schema", "domain", "primaryType"]
@@ -398,24 +511,39 @@
                 "type": "string"
               },
               "templateHash": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Hash schema",
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]{64}"
               },
               "issuanceDate": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Datetime schema",
                 "type": "string",
                 "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
               },
               "credentialSubject": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Credential subject schema",
                 "type": "object",
                 "required": ["id", "type", "achievement"],
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "DID schema",
+                    "type": "string",
+                    "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
                   },
                   "type": {
                     "type": "string"
                   },
                   "name": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  },
+                  "endorsementComment": {
                     "type": "string"
                   },
                   "achievement": {
@@ -445,14 +573,17 @@
                         "type": "string"
                       }
                     },
-                    "additionalItems": false
-                  },
-                  "additionalProperties": false
+                    "additionalProperties": false
+                  }
                 }
               },
               "credentialSchema": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Credential schema array schema",
                 "type": "array",
                 "items": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "title": "Credential schema schema",
                   "type": "object",
                   "required": ["id", "type"],
                   "properties": {
@@ -467,7 +598,9 @@
                 }
               },
               "proof": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
+                "title": "EIP 712 proof schema",
                 "required": ["type", "created", "proofPurpose", "verificationMethod", "proofValue", "eip712"],
                 "properties": {
                   "type": {
@@ -477,10 +610,14 @@
                     "type": "string"
                   },
                   "created": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "Datetime schema",
                     "type": "string",
                     "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
                   },
                   "verificationMethod": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "verificationMethod schema",
                     "type": "string",
                     "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                   },
@@ -509,8 +646,7 @@
                         "required": ["name", "chainId", "version"]
                       },
                       "primaryType": {
-                        "type": "string",
-                        "enum": ["OpenBadgeCredential"]
+                        "type": "string"
                       }
                     },
                     "required": ["messageDataEip712Schema", "domain", "primaryType"]
@@ -522,6 +658,7 @@
             "additionalProperties": false
           },
           {
+            "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
             "title": "Endorsement OpenBadge V3 schema",
             "required": [
@@ -566,6 +703,8 @@
                 }
               },
               "issuer": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Issuer schema",
                 "type": "object",
                 "required": ["id", "type", "name"],
                 "properties": {
@@ -585,36 +724,85 @@
                 "type": "string"
               },
               "templateHash": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Hash schema",
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]{64}"
               },
               "issuanceDate": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Datetime schema",
                 "type": "string",
                 "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
               },
               "expirationDate": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Datetime schema",
                 "type": "string",
                 "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
               },
               "credentialSubject": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Credential subject schema",
                 "type": "object",
                 "required": ["id", "type", "endorsementComment"],
                 "properties": {
                   "id": {
-                    "type": "string"
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "DID schema",
+                    "type": "string",
+                    "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
                   },
                   "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "image": {
                     "type": "string"
                   },
                   "endorsementComment": {
                     "type": "string"
                   },
-                  "additionalProperties": false
+                  "achievement": {
+                    "type": "object",
+                    "required": ["id", "type", "criteria", "description", "name"],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "criteria": {
+                        "type": "object",
+                        "properties": {
+                          "narrative": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["narrative"],
+                        "additionalItems": false
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
                 }
               },
               "credentialSchema": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "title": "Credential schema array schema",
                 "type": "array",
                 "items": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "title": "Credential schema schema",
                   "type": "object",
                   "required": ["id", "type"],
                   "properties": {
@@ -629,7 +817,9 @@
                 }
               },
               "proof": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
+                "title": "EIP 712 proof schema",
                 "required": ["type", "created", "proofPurpose", "verificationMethod", "proofValue", "eip712"],
                 "properties": {
                   "type": {
@@ -639,10 +829,14 @@
                     "type": "string"
                   },
                   "created": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "Datetime schema",
                     "type": "string",
                     "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
                   },
                   "verificationMethod": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "title": "verificationMethod schema",
                     "type": "string",
                     "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
                   },
@@ -671,8 +865,7 @@
                         "required": ["name", "chainId", "version"]
                       },
                       "primaryType": {
-                        "type": "string",
-                        "enum": ["EndorsementCredential"]
+                        "type": "string"
                       }
                     },
                     "required": ["messageDataEip712Schema", "domain", "primaryType"]
@@ -687,7 +880,9 @@
       }
     },
     "proof": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "object",
+      "title": "Custom proof schema",
       "required": ["type", "created", "proofPurpose", "verificationMethod", "signatureValue", "challenge", "domain"],
       "properties": {
         "type": {
@@ -697,10 +892,14 @@
           "type": "string"
         },
         "created": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Datetime schema",
           "type": "string",
           "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{0,6})?Z$"
         },
         "verificationMethod": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "verificationMethod schema",
           "type": "string",
           "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
         },

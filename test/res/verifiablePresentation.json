@@ -1,68 +1,47 @@
 {
-    "context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.w3.org/2018/credentials/examples/v1"
-    ],
-    "type": [
-        "VerifiablePresentation",
-        "CredentialManagerPresentation"
-    ],
-    "id": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640",
-    "verifiableCredential": [
-        {
-            "context": [
-                "https://www.w3.org/2018/credentials/v1",
-                "https://www.w3.org/2018/credentials/examples/v1"
-            ],
-            "type": [
-                "VerifiableCredential"
-            ],
-            "issuer": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be",
-            "issuanceDate": "2021-11-10T11:36:09Z",
-            "credentialSubject": {
-                "id": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640",
-                "type": "Person",
-                "email": "adutres@mytip.co"
-            },
-            "proof": {
-                "type": "EcdsaSecp256k1Signature2019",
-                "created": "2021-11-10T11:36:09Z",
-                "proofPurpose": "assertionMethod",
-                "verificationMethod": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be#VC-Signature",
-                "signatureValue": "1b048f273aae4ef5eae0b5831b515b1b8f685dab46f2ba3309eacb29eadbc920093f406f4628480b5bcceaab004dcc0c70354d99b45491870d644df20624d0164f"
-            }
-        },
-        {
-            "context": [
-                "https://www.w3.org/2018/credentials/v1",
-                "https://www.w3.org/2018/credentials/examples/v1"
-            ],
-            "type": [
-                "VerifiableCredential"
-            ],
-            "issuer": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be",
-            "issuanceDate": "2021-11-10T11:36:04Z",
-            "credentialSubject": {
-                "id": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640",
-                "type": "Person",
-                "givenName": "Alexandre"
-            },
-            "proof": {
-                "type": "EcdsaSecp256k1Signature2019",
-                "created": "2021-11-10T11:36:05Z",
-                "proofPurpose": "assertionMethod",
-                "verificationMethod": "DID:SDI:0xcba95456587CD7E6f5Da9b321C635150300566be#VC-Signature",
-                "signatureValue": "1b754dbea9a648442fce8b9a879b7739ec9c064ac2c755c1431f1f5a347839845a7c36edbb4431c89a2d18cf04ba89d3af25e889788a1332bd221db035dade617c"
-            }
-        }
-    ],
-    "proof": {
-        "type": "EcdsaSecp256k1Signature2019",
-        "created": "2021-11-10T13:16:52.760811",
-        "proofPurpose": "DIDAuth",
-        "verificationMethod": "DID:SDI:0x0d040c04e54A03799e0C907F325D220ca374F640#VP-Signature",
-        "challenge": "5be6ee662a81daf6ca970bb02301b99801d1964ccc51cd73ae9ea04a7394cd0c",
-        "domain": "http://192.168.1.53:5001/api/v1/auth/vp?onlysignup=1",
-        "signatureValue": "1c1bd832a669180c5a7981fc886b887326c680b9d6ac352e3ce84ed3b3090b54de34e861046332fdfdd956bccd9fc3c42a655dc8616a4be902fad6fcf31fefaf8a"
-    }
+	"@context": ["https://www.w3.org/2018/credentials/v1", "https://www.w3.org/2018/credentials/examples/v1"],
+	"type": ["VerifiablePresentation", "CredentialManagerPresentation"],
+	"id": "did:mydid:zhSRenUwHt39nmDDNkJinJUZQCzcs8pBF9iNaaAiyPrLe",
+	"appBundleId": "com.mydid.wallet",
+	"verifiableCredential": [{
+		"@context": ["https://www.w3.org/2018/credentials/v1", "https://w3c-ccg.github.io/ethereum-eip712-signature-2021-spec/contexts/v1", "https://schema.org"],
+		"type": ["VerifiableCredential"],
+		"issuer": "did:mydid:zeb8iho6uuFKmfWxpG5Sawu1F3wvw7tE8RMzMg567hWWT",
+		"issuanceDate": "2023-04-27T09:16:35.990Z",
+		"credentialSubject": {
+			"id": "did:mydid:zhSRenUwHt39nmDDNkJinJUZQCzcs8pBF9iNaaAiyPrLe",
+			"image": "ipfs:/ipfs/QmXfrS3pHerg44zzK6QKQj6JDk8H6cMtQS7pdXbohwNQfK/image",
+			"type": "Person",
+			"email": "maxime.dutres@mydid.com"
+		},
+		"credentialSchema": {
+			"id": "https://myntfsid.mypinata.cloud/ipfs/QmQVWmUBCLyuky9KeBAks2Ca8VT8CrHMnNDTSkrZAzSNji",
+			"type": "MyDIDSchemaValidator2022"
+		},
+		"proof": {
+			"type": "EthereumEip712Signature2021",
+			"created": "2023-04-27T09:16:37.558Z",
+			"proofPurpose": "assertionMethod",
+			"verificationMethod": "did:mydid:zeb8iho6uuFKmfWxpG5Sawu1F3wvw7tE8RMzMg567hWWT#ASSR_1",
+			"proofValue": "zDXA5qtTqf9NbZhqcdsYJPZqkYygCojY2aeijGyh1eSEB3Q6SirPnF6iLyFf5WX4d5GsaFarM8xQhfjTHSm7FDYhWK",
+			"eip712": {
+				"messageDataEip712Schema": "https://myntfsid.mypinata.cloud/ipfs/QmfVApuBeHbvnqAk5c1FxEN1mZy15KmMbyvYyN1fR8hvXs",
+				"domain": {
+					"name": "myDid",
+					"chainId": 56,
+					"version": "2"
+				},
+				"primaryType": "VerifiableCredential"
+			}
+		}
+	}],
+	"proof": {
+		"type": "EcdsaSecp256k1Signature2019",
+		"created": "2023-05-09T15:27:08.130078Z",
+		"proofPurpose": "DIDAuth",
+		"verificationMethod": "did:mydid:zhSRenUwHt39nmDDNkJinJUZQCzcs8pBF9iNaaAiyPrLe#ASSR_1",
+		"challenge": "81388fab-243f-4ca7-9c70-7926ea44e93b#5736bf2d644097a7fe330083ca450c764f908eb800d92ab9677550f1512002c9#did:mydid:zeb8iho6uuFKmfWxpG5Sawu1F3wvw7tE8RMzMg567hWWT",
+		"domain": "http://10.11.10.188:5001/api/v1/auth/vp",
+		"signatureValue": "z29AnEAGHXiN8zPcjqkLSPbk2j5Pnz6rVHd3RcCYSeDusbudpkeb1SQbaoQLN9VKLu82BTgkb7mb7BFqXiYLhYnb1U"
+	}
 }
