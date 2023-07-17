@@ -159,22 +159,23 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
 
   // Validate template
   if (type == 'EndorsementCredential') {
-    if (templateData.name != verifiableCredential.credentialSubject.endorsementComment.split('::')[0]) {
+    if (templateData && templateData.name != verifiableCredential.credentialSubject.endorsementComment.split('::')[0]) {
       throw 'Badge does not correspond to template';
     }
   } else if (type == 'OpenBadgeCredential') {
     if (
-      templateData.name != verifiableCredential.credentialSubject.achievement.name ||
-      templateData.description != verifiableCredential.credentialSubject.achievement.description ||
-      templateData.criteria.narrative != verifiableCredential.credentialSubject.achievement.criteria.narrative ||
-      templateData.criteria.id != verifiableCredential.credentialSubject.achievement.criteria.id
+      templateData &&
+      (templateData.name != verifiableCredential.credentialSubject.achievement.name ||
+        templateData.description != verifiableCredential.credentialSubject.achievement.description ||
+        templateData.criteria.narrative != verifiableCredential.credentialSubject.achievement.criteria.narrative ||
+        templateData.criteria.id != verifiableCredential.credentialSubject.achievement.criteria.id)
     ) {
       throw 'Badge does not correspond to template';
     }
   }
 
   // Validate badge issuer
-  if (['EndorsementCredential', 'OpenBadgeCredential'].indexOf(type) != -1 && !isP2P) {
+  if (['EndorsementCredential', 'OpenBadgeCredential'].indexOf(type) != -1 && !isP2P && templateData) {
     if (!isIssuer) throw `Badge issued by a non-issuer`;
     if (
       didToAddress(templateData.issuerDID.split('#')[0]) !=

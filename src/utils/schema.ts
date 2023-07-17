@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import VPSchema from '../res/VPSchema.json';
+import VCSchema from '../res/VCSchema.json';
 
 const ajv = new Ajv({ strict: false, allErrors: true });
 
@@ -15,4 +16,8 @@ function validateJsonAgainstSchema(schema: object, json: object): boolean {
 
 export function isVerifiablePresentationSchema(VPData: object) {
   return validateJsonAgainstSchema(VPSchema, VPData);
+}
+
+export function isVerifiableCredentialSchema(VCData: object) {
+  return validateJsonAgainstSchema(VCSchema, VCData);
 }

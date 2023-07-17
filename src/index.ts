@@ -1,7 +1,8 @@
 import { Web3Provider } from './web3Provider';
 import { VerifiablePresentationRequest } from './models/VerifiablePresentationRequest';
 import { VerifiablePresentation } from './models/VerifiablePresentation';
-import { isVerifiablePresentationSchema } from './utils/schema';
+import { VerifiableCredential } from './models/VerifiableCredential';
+import { isVerifiablePresentationSchema, isVerifiableCredentialSchema } from './utils/schema';
 import { verifyVerifiablePresentation, verifyVerifiableCredential } from './utils/verifications';
 import { didToAddress } from './utils/cryptography';
 
@@ -15,6 +16,11 @@ const mydidAuth = {
 
   createVPRequest: (challenge: string, domain: string, verifiableCredentials: string[]) => {
     return new VerifiablePresentationRequest(challenge, domain, verifiableCredentials);
+  },
+
+  validateVCConsistency: (VCData: object): void => {
+    if (!isVerifiableCredentialSchema(VCData)) throw 'Incorrect format for verifiable credential';
+    return;
   },
 
   validateVPConsistency: (VPData: object): void => {
@@ -42,6 +48,14 @@ const mydidAuth = {
       (!authorizeVpSignedByIssuer && !vpSignerIsReceiver)
     )
       throw `Incorrect signer for verifiable presentation`;
+
+    return;
+  },
+
+  validateVCAuthenticity: async (VCData: object): Promise<void> => {
+    var verifiableCredential: VerifiableCredential = VCData as VerifiableCredential;
+
+    await verifyVerifiableCredential(verifiableCredential);
 
     return;
   },
