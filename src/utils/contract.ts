@@ -14,6 +14,6 @@ export async function isIssuerForAddress(address: string): Promise<boolean> {
     .call();
 }
 
-export async function isP2PBadgeTemplate(hash: string): Promise<boolean> {
-  return Web3Provider.getInstance().getContract().methods.isP2PBadgeTemplate(hash).call();
+export async function isIssuerTemplate(address: string, type: Number, hash: string): Promise<boolean> {
+  return Web3Provider.getInstance().getContract().methods.isIssuerTemplate(address, type, hash).call();
 }

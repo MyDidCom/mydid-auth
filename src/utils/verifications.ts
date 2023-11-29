@@ -2,7 +2,7 @@ import { VerifiablePresentation } from '../models/VerifiablePresentation';
 import { VerifiableCredential, Issuer } from '../models/VerifiableCredential';
 import { VerificationMethod } from '../models/VerificationMethod';
 import { recoverAddress, recoverEip712TypedSignatureV4, didToAddress, base58btcToHex } from '../utils/cryptography';
-import { isIssuerForAddress, isP2PBadgeTemplate } from '../utils/contract';
+import { isIssuerForAddress, isIssuerTemplate } from '../utils/contract';
 import { getJsonDataFromUrl } from '../utils/http';
 import { Web3Provider } from '../web3Provider';
 import bs58 from 'bs58';
@@ -17,10 +17,10 @@ export async function verifyVerifiablePresentation(verifiablePresentation: Verif
   let signerAddress: string = null;
 
   const [did, tag] = proof.verificationMethod.split('#');
-  const testnet = Web3Provider.getInstance().getChainId() == 0x61;
+  const chaindId = Web3Provider.getInstance().getChainId();
 
   const method: VerificationMethod = (await getJsonDataFromUrl(
-    `${RESOLVER_URL}${did}?tag=${tag}${testnet ? '&network=testnet' : ''}`
+    `${RESOLVER_URL}${did}?tag=${tag}&chainId=${chaindId}`
   )) as VerificationMethod;
 
   if (method.blockchainAccountId) {
@@ -46,21 +46,26 @@ export async function verifyVerifiablePresentation(verifiablePresentation: Verif
 }
 
 export async function verifyVerifiableCredential(verifiableCredential: VerifiableCredential): Promise<void[]> {
-  return Promise.all([
-    verifyVC(verifiableCredential),
-    ...((verifiableCredential.issuer as Issuer).endorsement
-      ? [verifyVC((verifiableCredential.issuer as Issuer).endorsement)]
-      : []),
-  ]);
+  const promiseArray = [];
+
+  function recursiveVerify(verifiableCredential: VerifiableCredential): void {
+    promiseArray.push(verifyVC(verifiableCredential));
+    if ((verifiableCredential.issuer as Issuer).endorsement) {
+      recursiveVerify((verifiableCredential.issuer as Issuer).endorsement);
+    }
+  }
+  recursiveVerify(verifiableCredential);
+
+  return Promise.all(promiseArray);
 }
 
 export async function verifyVC(verifiableCredential: VerifiableCredential): Promise<void> {
   const { proof, ...VCWithoutProof } = verifiableCredential;
 
   let isIssuer = false;
-  let isP2P = false;
   let templateData = null;
   let type = null;
+  let templateCategory = null;
 
   // Define VC type
   if (verifiableCredential.type.length == 1 && verifiableCredential.type.indexOf('VerifiableCredential') != -1)
@@ -71,17 +76,13 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
     type = 'EndorsementCredential';
   else throw `VC type not handled`;
 
-  // Verify VC sender is VC signer
-  if (
-    !(
-      (typeof verifiableCredential.issuer === 'string' &&
-        didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) ==
-          didToAddress(verifiableCredential.issuer)) ||
-      didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) ==
-        didToAddress((verifiableCredential.issuer as Issuer).id.split('#')[0])
-    )
-  ) {
-    throw `Sender and signer are different in VC`;
+  // Define badge contract type
+  if (verifiableCredential.templateHash) {
+    if (type == 'EndorsementCredential') templateCategory = 4;
+    else
+      templateCategory = ['Basic', 'Community', 'Participation', 'Membership'].indexOf(
+        verifiableCredential.credentialSubject.achievement.achievementType.replace('ext:', '')
+      );
   }
 
   await Promise.all([
@@ -91,10 +92,10 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
       let signerAddress: string = null;
 
       const [did, tag] = proof.verificationMethod.split('#');
-      const testnet = Web3Provider.getInstance().getChainId() == 0x61;
+      const chaindId = Web3Provider.getInstance().getChainId();
 
       const method: VerificationMethod = (await getJsonDataFromUrl(
-        `${RESOLVER_URL}${did}?tag=${tag}${testnet ? '&network=testnet' : ''}`
+        `${RESOLVER_URL}${did}?tag=${tag}&chainId=${chaindId}`
       )) as VerificationMethod;
       if (method.blockchainAccountId) {
         signerAddress = method.blockchainAccountId.split(':')[2];
@@ -131,15 +132,6 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
       isIssuer = await isIssuerForAddress(didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]));
       resolve({});
     }),
-    // Get P2P info
-    ...(verifiableCredential.templateHash
-      ? [
-          new Promise(async (resolve) => {
-            isP2P = await isP2PBadgeTemplate(verifiableCredential.templateHash);
-            resolve({});
-          }),
-        ]
-      : []),
     // Get template data
     ...(verifiableCredential.templateHash
       ? [
@@ -152,48 +144,152 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
           }),
         ]
       : []),
+    // Get template contract info (if not community badge)
+    ...(verifiableCredential.templateHash && templateCategory != 1
+      ? [
+          new Promise(async (resolve, reject) => {
+            // define template issuer address to verify
+            let issuerAddress: string;
+            if (
+              (verifiableCredential.issuer as Issuer).endorsement &&
+              (verifiableCredential.issuer as Issuer).endorsement.credentialSubject.endorsementComment.split('::')[0] ==
+                'DELEGATION'
+            ) {
+              issuerAddress = didToAddress(
+                (verifiableCredential.issuer as Issuer).endorsement.proof.verificationMethod.split('#')[0]
+              );
+            } else issuerAddress = didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]);
+
+            const templateInfoValid = await isIssuerTemplate(
+              issuerAddress,
+              templateCategory,
+              verifiableCredential.templateHash
+            );
+
+            if (!templateInfoValid) {
+              console.log('verifiableCredential1', verifiableCredential);
+              console.log('issuerAddress', issuerAddress);
+              console.log('templateCategory', templateCategory);
+              console.log('verifiableCredential.templateHash', verifiableCredential.templateHash);
+              reject(`Can't retrieve template info from contract`);
+            }
+
+            resolve({});
+          }),
+        ]
+      : []),
   ]);
 
-  // Check that endorsment is not P2P
-  if (type == 'EndorsementCredential' && isP2P) throw `Endorsement credential can't be P2P`;
+  // Add template contract info verification if community
+  if (templateCategory == 1) {
+    const templateInfoValid = await isIssuerTemplate(
+      didToAddress(templateData.issuerDID),
+      templateCategory,
+      verifiableCredential.templateHash
+    );
 
-  // Validate template
+    if (!templateInfoValid) {
+      throw `Can't retrieve template info from contract`;
+    }
+  }
+
+  // Validate badge content corresponding to badge template
   if (type == 'EndorsementCredential') {
-    if (templateData && templateData.name != verifiableCredential.credentialSubject.endorsementComment.split('::')[0]) {
+    if (templateData && templateData.name != verifiableCredential.credentialSubject.endorsementComment.split('::')[1]) {
       throw 'Badge does not correspond to template';
     }
   } else if (type == 'OpenBadgeCredential') {
-    if (
-      templateData &&
-      (templateData.name != verifiableCredential.credentialSubject.achievement.name ||
+    if (templateData) {
+      if (
+        templateData.name != verifiableCredential.credentialSubject.achievement.name ||
         templateData.description != verifiableCredential.credentialSubject.achievement.description ||
-        templateData.criteria.narrative != verifiableCredential.credentialSubject.achievement.criteria.narrative ||
-        templateData.criteria.id != verifiableCredential.credentialSubject.achievement.criteria.id)
-    ) {
-      throw 'Badge does not correspond to template';
+        templateData.criteria != verifiableCredential.credentialSubject.achievement.criteria.narrative
+      )
+        throw 'Badge does not correspond to template';
+      if (
+        templateCategory == 2 &&
+        (templateData.eventDetails.location != verifiableCredential.credentialSubject.achievement.location ||
+          templateData.eventDetails.startDate != verifiableCredential.credentialSubject.achievement.startDate ||
+          templateData.eventDetails.endDate != verifiableCredential.credentialSubject.achievement.endDate)
+      )
+        throw 'Badge does not correspond to participation template';
     }
+  }
+  // Validate badge sender corresponding to badge signer
+  if (
+    !(
+      (typeof verifiableCredential.issuer === 'string' &&
+        didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) ==
+          didToAddress(verifiableCredential.issuer)) ||
+      didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) ==
+        didToAddress((verifiableCredential.issuer as Issuer).id.split('#')[0])
+    )
+  ) {
+    throw `Sender and signer are different in VC`;
   }
 
   // Validate badge issuer
-  if (['EndorsementCredential', 'OpenBadgeCredential'].indexOf(type) != -1 && !isP2P && templateData) {
-    if (!isIssuer) throw `Badge issued by a non-issuer`;
-    if (
-      didToAddress(templateData.issuerDID.split('#')[0]) !=
-      didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0])
-    )
-      throw `Issuer doesn't own badge template`;
-  }
+  if (['EndorsementCredential', 'OpenBadgeCredential'].indexOf(type) != -1) {
+    if (!templateData) {
+      // it's a delegation badge
 
-  // Validate VC issuer
-  if (
-    type == 'VerifiableCredential' &&
-    !isIssuer &&
-    !(
+      // check is delegation is issued by an issuer
+      if (!isIssuer) throw `Badge issued by a non-issuer`;
+    } else if (templateCategory != 1) {
+      // it's a template-based badge and it's not a community badge
+
+      // check is badge is issued by an issuer (except for community badge)
+      if (!isIssuer) throw `Badge issued by a non-issuer`;
+
+      // check if there is delegation
+      if (
+        (verifiableCredential.issuer as Issuer).endorsement &&
+        (verifiableCredential.issuer as Issuer).endorsement.credentialSubject.endorsementComment.split('::')[0] ==
+          'DELEGATION'
+      ) {
+        // there is a delegation
+
+        // check if signature date is within delegation date range
+        if (
+          new Date(verifiableCredential.proof.created) <
+            new Date((verifiableCredential.issuer as Issuer).endorsement.issuanceDate) ||
+          new Date(verifiableCredential.proof.created) >
+            new Date((verifiableCredential.issuer as Issuer).endorsement.expirationDate)
+        ) {
+          throw `Badge is not in delegation date range`;
+        }
+
+        // check if template issuerDID is same as delegation signer
+        if (
+          didToAddress(templateData.issuerDID.split('#')[0]) !=
+          didToAddress((verifiableCredential.issuer as Issuer).endorsement.proof.verificationMethod.split('#')[0])
+        )
+          throw `Template issuer doesn't match delegation signer`;
+
+        // check if template hash is allowed by delegation
+        if (
+          verifiableCredential.templateHash.replace('0x', '') !=
+          (verifiableCredential.issuer as Issuer).endorsement.credentialSubject.endorsementComment.split('::')[2]
+        ) {
+          throw `Template hash is not allowed by delegation`;
+        }
+      } else {
+        // there is no delegation
+
+        // check if template issuerDID is same as badge signer
+        if (
+          didToAddress(templateData.issuerDID.split('#')[0]) !=
+          didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0])
+        )
+          throw `Template issuer doesn't match signer`;
+      }
+    }
+  } else if (type == 'VerifiableCredential') {
+    // it's a basic attestation
+    const selfSigned =
       verifiableCredential.credentialSubject.hasOwnProperty('award') &&
-      selfSignedVCs.indexOf(verifiableCredential.credentialSubject['award'].split(';')[0]) != -1
-    )
-  ) {
-    throw `VC issued by a non-issuer`;
+      selfSignedVCs.indexOf(verifiableCredential.credentialSubject['award'].split(';')[0]) != -1;
+    if (!isIssuer && !selfSigned) throw `VC issued by a non-issuer`;
   }
 
   return;

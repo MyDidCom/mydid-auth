@@ -1,7 +1,7 @@
-import Web3 from "web3";
-import { Contract } from "web3-eth-contract";
-import { AbiItem } from "web3-utils";
-import contractABI from "./res/contractABI.json";
+import Web3 from 'web3';
+import { Contract } from 'web3-eth-contract';
+import { AbiItem } from 'web3-utils';
+import contractABI from './res/contractABI.json';
 
 export class Web3Provider {
   private static instance: Web3Provider;
@@ -10,10 +10,7 @@ export class Web3Provider {
   abi: AbiItem[] = <AbiItem[]>contractABI;
   chainId: Number;
 
-  constructor() {
-    this.web3 = new Web3("https://bsc-dataseed1.binance.org/");
-    this.contract = new this.web3.eth.Contract(this.abi, "0xc9F89E14B8b21A21e9359299047d333BFC6EFEb3");
-  }
+  constructor() {}
 
   public static getInstance(): Web3Provider {
     if (!Web3Provider.instance) {

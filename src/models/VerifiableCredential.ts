@@ -3,6 +3,7 @@ export interface VerifiableCredential {
   type: string[];
   issuer: string | Issuer;
   issuanceDate: string;
+  expirationDate?: string;
   templateHash?: string;
   credentialSubject: CredentialSubject;
   proof: Proof;
@@ -44,9 +45,13 @@ interface Proof {
 interface Achievement {
   id: string;
   type: string;
+  achievementType: string;
   description: string;
   name: string;
   criteria: Criteria;
+  location?: Criteria;
+  startDate?: Criteria;
+  endDate?: Criteria;
 }
 
 interface Criteria {

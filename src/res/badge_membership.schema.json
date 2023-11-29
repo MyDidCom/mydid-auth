@@ -1,0 +1,220 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Badge Membership v4.0 schema",
+  "required": [
+    "@context",
+    "mVersion",
+    "id",
+    "type",
+    "issuer",
+    "name",
+    "description",
+    "image",
+    "templateHash",
+    "issuanceDate",
+    "credentialSchema",
+    "proof",
+    "credentialSubject"
+  ],
+  "properties": {
+    "@context": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "additionalItems": false
+    },
+    "mVersion": {
+      "type": "string",
+      "const": "4.0"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "array",
+      "minItems": 2,
+      "minContains": 2,
+      "uniqueItems": true,
+      "contains": {
+        "type": "string",
+        "enum": ["VerifiableCredential", "OpenBadgeCredential"]
+      }
+    },
+    "issuer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Issuer schema",
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "endorsement": {}
+      },
+      "additionalProperties": false
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "templateHash": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Hash schema",
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{64}"
+    },
+    "issuanceDate": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Datetime schema",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{0,6})?(Z|((\\+|-)[0-9]{2}:[0-9]{2}))$"
+    },
+    "expirationDate": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Datetime schema",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{0,6})?(Z|((\\+|-)[0-9]{2}:[0-9]{2}))$"
+    },
+    "credentialSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Credential schema array schema",
+      "type": "array",
+      "items": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Credential schema schema",
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "proof": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "title": "EIP 712 proof schema",
+      "required": ["type", "created", "proofPurpose", "verificationMethod", "proofValue", "eip712"],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "proofPurpose": {
+          "type": "string"
+        },
+        "created": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "Datetime schema",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{0,6})?(Z|((\\+|-)[0-9]{2}:[0-9]{2}))$"
+        },
+        "verificationMethod": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "verificationMethod schema",
+          "type": "string",
+          "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})#(.+)$"
+        },
+        "proofValue": {
+          "type": "string"
+        },
+        "eip712": {
+          "type": "object",
+          "properties": {
+            "messageDataEip712Schema": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "chainId": {
+                  "type": "integer"
+                },
+                "version": {
+                  "type": "string"
+                }
+              },
+              "required": ["name", "chainId", "version"]
+            },
+            "primaryType": {
+              "type": "string"
+            }
+          },
+          "required": ["messageDataEip712Schema", "domain", "primaryType"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "credentialSubject": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Open badge credential subject schema",
+      "type": "object",
+      "required": ["id", "type", "achievement"],
+      "properties": {
+        "id": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "title": "DID schema",
+          "type": "string",
+          "pattern": "^(DID|did):([a-zA-z]{1,}):(0x[a-fA-F0-9]{40}|z[1-9A-HJ-NP-Za-km-z]{40,50})$"
+        },
+        "type": {
+          "type": "string",
+          "const": "AchievementSubject"
+        },
+        "achievement": {
+          "type": "object",
+          "required": ["id", "type", "criteria", "description", "achievementType", "name"],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "criteria": {
+              "type": "object",
+              "properties": {
+                "narrative": {
+                  "type": "string"
+                }
+              },
+              "required": ["narrative"],
+              "additionalItems": false
+            },
+            "description": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "achievementType": {
+              "type": "string",
+              "enum": ["ext:Membership"]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

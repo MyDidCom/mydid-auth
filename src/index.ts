@@ -2,6 +2,7 @@ import { Web3Provider } from './web3Provider';
 import { VerifiablePresentationRequest } from './models/VerifiablePresentationRequest';
 import { VerifiablePresentation } from './models/VerifiablePresentation';
 import { VerifiableCredential } from './models/VerifiableCredential';
+import { Issuer } from './models/VerifiableCredential';
 import { isVerifiablePresentationSchema, isVerifiableCredentialSchema } from './utils/schema';
 import { verifyVerifiablePresentation, verifyVerifiableCredential } from './utils/verifications';
 import { didToAddress } from './utils/cryptography';
@@ -10,7 +11,10 @@ let authorizeVpSignedByIssuer = false;
 
 const mydidAuth = {
   initialize: (config: object): void => {
-    Web3Provider.getInstance().initialize(config['web3GivenProvider'], config['smartContractAddress']);
+    Web3Provider.getInstance().initialize(
+      config['web3GivenProvider'],
+      config['smartContractAddress']
+    );
     authorizeVpSignedByIssuer = config['authorizeVpSignedByIssuer'];
   },
 
@@ -19,7 +23,8 @@ const mydidAuth = {
   },
 
   validateVCConsistency: (VCData: object): void => {
-    if (!isVerifiableCredentialSchema(VCData)) throw 'Incorrect format for verifiable credential';
+    var verifiableCredential: VerifiableCredential = VCData as VerifiableCredential;
+    recursiveSchemaVerify(verifiableCredential);
     return;
   },
 
@@ -28,26 +33,25 @@ const mydidAuth = {
 
     const verifiablePresentation: VerifiablePresentation = VPData as VerifiablePresentation;
 
-    let vpSignerIsSender = true;
-    let vpSignerIsReceiver = true;
-
     if (verifiablePresentation.verifiableCredential) {
       for (const verifiableCredential of verifiablePresentation.verifiableCredential) {
-        if (didToAddress(verifiableCredential.credentialSubject.id) != didToAddress(verifiablePresentation.id))
-          vpSignerIsReceiver = false;
+        // check VP signer is corresponding to VC owner (or VC signer for issuer specific case)
         if (
-          didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]) !=
-          didToAddress(verifiablePresentation.proof.verificationMethod.split('#')[0])
-        )
-          vpSignerIsSender = false;
+          didToAddress(verifiablePresentation.proof.verificationMethod.split('#')[0]) !=
+          didToAddress(verifiableCredential.credentialSubject.id)
+        ) {
+          if (!authorizeVpSignedByIssuer) throw `Incorrect signer for verifiable presentation`;
+          else if (
+            didToAddress(verifiablePresentation.proof.verificationMethod.split('#')[0]) !=
+            didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0])
+          )
+            throw `Incorrect signer for verifiable presentation`;
+        }
+
+        // check VC format
+        recursiveSchemaVerify(verifiableCredential);
       }
     }
-
-    if (
-      (authorizeVpSignedByIssuer && !vpSignerIsReceiver && !vpSignerIsSender) ||
-      (!authorizeVpSignedByIssuer && !vpSignerIsReceiver)
-    )
-      throw `Incorrect signer for verifiable presentation`;
 
     return;
   },
@@ -76,3 +80,11 @@ const mydidAuth = {
 
 module.exports = mydidAuth;
 export default mydidAuth;
+
+function recursiveSchemaVerify(verifiableCredential: VerifiableCredential): void {
+  if (!isVerifiableCredentialSchema(verifiableCredential)) throw 'Incorrect format for verifiable credential';
+
+  if ((verifiableCredential.issuer as Issuer).endorsement) {
+    recursiveSchemaVerify((verifiableCredential.issuer as Issuer).endorsement);
+  }
+}
