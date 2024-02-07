@@ -8,7 +8,7 @@ import { Web3Provider } from '../web3Provider';
 import bs58 from 'bs58';
 
 const RESOLVER_URL = 'https://resolver.mydid.eu/1.0/identifiers/';
-const selfSignedVCs = ['pseudo', 'walletAddress', 'publicKey', 'did'];
+const selfSignedVCs = ['pseudo', 'walletAddress', 'publicKey', 'did', 'authenticationKey', 'test'];
 
 export async function verifyVerifiablePresentation(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
   const { proof, ...VPWithoutProof } = verifiablePresentation;
@@ -167,10 +167,6 @@ export async function verifyVC(verifiableCredential: VerifiableCredential): Prom
             );
 
             if (!templateInfoValid) {
-              console.log('verifiableCredential1', verifiableCredential);
-              console.log('issuerAddress', issuerAddress);
-              console.log('templateCategory', templateCategory);
-              console.log('verifiableCredential.templateHash', verifiableCredential.templateHash);
               reject(`Can't retrieve template info from contract`);
             }
 
