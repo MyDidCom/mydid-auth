@@ -8,7 +8,6 @@ import { Web3Provider } from '../web3Provider';
 import bs58 from 'bs58';
 
 const RESOLVER_URL = 'https://resolver.mydid.eu/1.0/identifiers/';
-const selfSignedVCs = ['pseudo', 'walletAddress', 'publicKey', 'did', 'authenticationKey', 'test'];
 
 export async function verifyVerifiablePresentation(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
   const { proof, ...VPWithoutProof } = verifiablePresentation;
@@ -45,11 +44,14 @@ export async function verifyVerifiablePresentation(verifiablePresentation: Verif
   return true;
 }
 
-export async function verifyVerifiableCredential(verifiableCredential: VerifiableCredential): Promise<void[]> {
+export async function verifyVerifiableCredential(
+  verifiableCredential: VerifiableCredential,
+  selfSignedVCs: String[]
+): Promise<void[]> {
   const promiseArray = [];
 
   function recursiveVerify(verifiableCredential: VerifiableCredential): void {
-    promiseArray.push(verifyVC(verifiableCredential));
+    promiseArray.push(verifyVC(verifiableCredential, selfSignedVCs));
     if ((verifiableCredential.issuer as Issuer).endorsement) {
       recursiveVerify((verifiableCredential.issuer as Issuer).endorsement);
     }
@@ -59,7 +61,7 @@ export async function verifyVerifiableCredential(verifiableCredential: Verifiabl
   return Promise.all(promiseArray);
 }
 
-export async function verifyVC(verifiableCredential: VerifiableCredential): Promise<void> {
+export async function verifyVC(verifiableCredential: VerifiableCredential, selfSignedVCs: String[]): Promise<void> {
   const { proof, ...VCWithoutProof } = verifiableCredential;
 
   let isIssuer = false;

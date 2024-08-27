@@ -8,14 +8,13 @@ import { verifyVerifiablePresentation, verifyVerifiableCredential } from './util
 import { didToAddress } from './utils/cryptography';
 
 let authorizeVpSignedByIssuer = false;
+let selfSignedVCs = ['pseudo', 'walletAddress', 'publicKey', 'did', 'authenticationKey', 'test'];
 
 const mydidAuth = {
   initialize: (config: object): void => {
-    Web3Provider.getInstance().initialize(
-      config['web3GivenProvider'],
-      config['smartContractAddress']
-    );
+    Web3Provider.getInstance().initialize(config['web3GivenProvider'], config['smartContractAddress']);
     authorizeVpSignedByIssuer = config['authorizeVpSignedByIssuer'];
+    if (config['authorizedSelfsignedVCs']) selfSignedVCs = config['authorizedSelfsignedVCs'].split(',');
   },
 
   createVPRequest: (challenge: string, domain: string, verifiableCredentials: string[]) => {
@@ -59,7 +58,7 @@ const mydidAuth = {
   validateVCAuthenticity: async (VCData: object): Promise<void> => {
     var verifiableCredential: VerifiableCredential = VCData as VerifiableCredential;
 
-    await verifyVerifiableCredential(verifiableCredential);
+    await verifyVerifiableCredential(verifiableCredential, selfSignedVCs);
 
     return;
   },
@@ -70,7 +69,7 @@ const mydidAuth = {
     await Promise.all([
       verifyVerifiablePresentation(verifiablePresentation),
       ...(verifiablePresentation.verifiableCredential
-        ? verifiablePresentation.verifiableCredential.map((vc) => verifyVerifiableCredential(vc))
+        ? verifiablePresentation.verifiableCredential.map((vc) => verifyVerifiableCredential(vc, selfSignedVCs))
         : []),
     ]);
 
