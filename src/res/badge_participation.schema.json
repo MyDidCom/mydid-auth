@@ -56,6 +56,9 @@
         "type": {
           "type": "string"
         },
+        "url": {
+          "type": "string"
+        },
         "endorsement": {}
       },
       "additionalProperties": false
@@ -73,7 +76,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Hash schema",
       "type": "string",
-      "pattern": "^0x[a-fA-F0-9]{64}"
+      "pattern": "^(0x)?[a-fA-F0-9]{64}"
     },
     "issuanceDate": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -86,6 +89,32 @@
       "title": "Datetime schema",
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{0,6})?(Z|((\\+|-)[0-9]{2}:[0-9]{2}))$"
+    },
+    "badgeTheme": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Badge schema schema",
+      "type": "object",
+      "properties": {
+        "backgroundCardColor": {
+          "type": "string"
+        },
+        "textColor": {
+          "type": "string"
+        },
+        "cardEffect": {
+          "type": "string"
+        },
+        "textureImageURL": {
+          "type": "string"
+        },
+        "isLogoBack": {
+          "type": ["boolean", "null"]
+        },
+        "shape": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     },
     "credentialSchema": {
       "$schema": "http://json-schema.org/draft-07/schema#",

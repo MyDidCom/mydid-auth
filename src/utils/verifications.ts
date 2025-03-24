@@ -86,97 +86,101 @@ export async function verifyVC(verifiableCredential: VerifiableCredential, selfS
         verifiableCredential.credentialSubject.achievement.achievementType.replace('ext:', '')
       );
   }
+  try {
+    await Promise.all([
+      // Verify VC signature
+      new Promise(async (resolve, reject) => {
+        // Retrieve signer address from DID document
+        let signerAddress: string = null;
 
-  await Promise.all([
-    // Verify VC signature
-    new Promise(async (resolve, reject) => {
-      // Retrieve signer address from DID document
-      let signerAddress: string = null;
+        const [did, tag] = proof.verificationMethod.split('#');
+        const chaindId = Web3Provider.getInstance().getChainId();
 
-      const [did, tag] = proof.verificationMethod.split('#');
-      const chaindId = Web3Provider.getInstance().getChainId();
-
-      const method: VerificationMethod = (await getJsonDataFromUrl(
-        `${RESOLVER_URL}${did}?tag=${tag}&chainId=${chaindId}`
-      )) as VerificationMethod;
-      if (method.blockchainAccountId) {
-        signerAddress = method.blockchainAccountId.split(':')[2];
-      } else if (method.publicKeyMultibase) {
-        signerAddress = base58btcToHex(method.publicKeyMultibase);
-      }
-
-      if (!signerAddress) reject(`Can't retrieve address from resolver`);
-
-      // Verify proof signature
-      let recoveredAddress: string = null;
-      if (proof.type == 'EcdsaSecp256k1Signature2019') {
-        recoveredAddress = recoverAddress(proof.signatureValue, JSON.stringify(VCWithoutProof));
-      } else if (proof.type == 'EthereumEip712Signature2021') {
-        recoveredAddress = await recoverEip712TypedSignatureV4(verifiableCredential);
-      }
-      if (recoveredAddress != signerAddress) reject('Bad signature for verifiable credential');
-
-      // For self-signed - verify credentialSubject id is issuer
-      if (
-        type == 'VerifiableCredential' &&
-        verifiableCredential.credentialSubject.hasOwnProperty('award') &&
-        selfSignedVCs.indexOf(verifiableCredential.credentialSubject['award'].split(';')[0]) != -1
-      ) {
-        if (signerAddress != didToAddress(verifiableCredential.credentialSubject.id)) {
-          reject('Self-signed vc is not valid');
+        const method: VerificationMethod = (await getJsonDataFromUrl(
+          `${RESOLVER_URL}${did}?tag=${tag}&chainId=${chaindId}`
+        )) as VerificationMethod;
+        if (method.blockchainAccountId) {
+          signerAddress = method.blockchainAccountId.split(':')[2];
+        } else if (method.publicKeyMultibase) {
+          signerAddress = base58btcToHex(method.publicKeyMultibase);
         }
-      }
 
-      resolve({});
-    }),
-    // Get sender role
-    new Promise(async (resolve) => {
-      isIssuer = await isIssuerForAddress(didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]));
-      resolve({});
-    }),
-    // Get template data
-    ...(verifiableCredential.templateHash
-      ? [
-          new Promise(async (resolve) => {
-            const cleanHash = (verifiableCredential.templateHash + '').replace('0x', '');
-            const bytes = Buffer.from('1220' + cleanHash, 'hex');
-            const cid = bs58.encode(bytes);
-            templateData = await getJsonDataFromUrl('https://myntfsid.mypinata.cloud/ipfs/' + cid);
-            resolve({});
-          }),
-        ]
-      : []),
-    // Get template contract info (if not community badge)
-    ...(verifiableCredential.templateHash && templateCategory != 1
-      ? [
-          new Promise(async (resolve, reject) => {
-            // define template issuer address to verify
-            let issuerAddress: string;
-            if (
-              (verifiableCredential.issuer as Issuer).endorsement &&
-              (verifiableCredential.issuer as Issuer).endorsement.credentialSubject.endorsementComment.split('::')[0] ==
-                'DELEGATION'
-            ) {
-              issuerAddress = didToAddress(
-                (verifiableCredential.issuer as Issuer).endorsement.proof.verificationMethod.split('#')[0]
+        if (!signerAddress) reject(`Can't retrieve address from resolver`);
+
+        // Verify proof signature
+        let recoveredAddress: string = null;
+        if (proof.type == 'EcdsaSecp256k1Signature2019') {
+          recoveredAddress = recoverAddress(proof.signatureValue, JSON.stringify(VCWithoutProof));
+        } else if (proof.type == 'EthereumEip712Signature2021') {
+          recoveredAddress = await recoverEip712TypedSignatureV4(verifiableCredential);
+        }
+        if (recoveredAddress != signerAddress) reject('Bad signature for verifiable credential');
+
+        // For self-signed - verify credentialSubject id is issuer
+        if (
+          type == 'VerifiableCredential' &&
+          verifiableCredential.credentialSubject.hasOwnProperty('award') &&
+          selfSignedVCs.indexOf(verifiableCredential.credentialSubject['award'].split(';')[0]) != -1
+        ) {
+          if (signerAddress != didToAddress(verifiableCredential.credentialSubject.id)) {
+            reject('Self-signed vc is not valid');
+          }
+        }
+
+        resolve({});
+      }),
+      // Get sender role
+      new Promise(async (resolve) => {
+        isIssuer = await isIssuerForAddress(didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]));
+        resolve({});
+      }),
+      // Get template data
+      ...(verifiableCredential.templateHash
+        ? [
+            new Promise(async (resolve) => {
+              const cleanHash = (verifiableCredential.templateHash + '').replace('0x', '');
+              const bytes = Buffer.from('1220' + cleanHash, 'hex');
+              const cid = bs58.encode(bytes);
+              templateData = await getJsonDataFromUrl('https://myntfsid.mypinata.cloud/ipfs/' + cid);
+              resolve({});
+            }),
+          ]
+        : []),
+      // Get template contract info (if not community badge)
+      ...(verifiableCredential.templateHash && templateCategory != 1
+        ? [
+            new Promise(async (resolve, reject) => {
+              // define template issuer address to verify
+              let issuerAddress: string;
+              if (
+                (verifiableCredential.issuer as Issuer).endorsement &&
+                (verifiableCredential.issuer as Issuer).endorsement.credentialSubject.endorsementComment.split(
+                  '::'
+                )[0] == 'DELEGATION'
+              ) {
+                issuerAddress = didToAddress(
+                  (verifiableCredential.issuer as Issuer).endorsement.proof.verificationMethod.split('#')[0]
+                );
+              } else issuerAddress = didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]);
+
+              const templateInfoValid = await isIssuerTemplate(
+                issuerAddress,
+                templateCategory,
+                verifiableCredential.templateHash
               );
-            } else issuerAddress = didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]);
 
-            const templateInfoValid = await isIssuerTemplate(
-              issuerAddress,
-              templateCategory,
-              verifiableCredential.templateHash
-            );
+              if (!templateInfoValid) {
+                reject(`Can't retrieve template info from contract`);
+              }
 
-            if (!templateInfoValid) {
-              reject(`Can't retrieve template info from contract`);
-            }
-
-            resolve({});
-          }),
-        ]
-      : []),
-  ]);
+              resolve({});
+            }),
+          ]
+        : []),
+    ]);
+  } catch (err) {
+    throw err;
+  }
 
   // Add template contract info verification if community
   if (templateCategory == 1) {
