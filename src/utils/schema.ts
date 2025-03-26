@@ -7,6 +7,7 @@ import badgeParticipationSchema from '../res/badge_participation.schema.json';
 import badgeRoleSchema from '../res/badge_role.schema.json';
 import certificateSchema from '../res/certificate.schema.json';
 import verifiablePresentationSchema from '../res/verifiable_presentation.schema.json';
+import badgeTicketSchema from '../res/badge_ticket.schema.json';
 
 const ajv = new Ajv({ strict: false, allErrors: true });
 
@@ -31,6 +32,7 @@ export function isVerifiableCredentialSchema(VCData: object) {
     validateJsonAgainstSchema(badgeCommunitySchema, VCData) ||
     validateJsonAgainstSchema(badgeMembershipSchema, VCData) ||
     validateJsonAgainstSchema(badgeParticipationSchema, VCData) ||
+    validateJsonAgainstSchema(badgeTicketSchema, VCData) ||
     validateJsonAgainstSchema(badgeRoleSchema, VCData) ||
     validateJsonAgainstSchema(certificateSchema, VCData)
   );

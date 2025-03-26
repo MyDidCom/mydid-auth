@@ -81,6 +81,8 @@ export async function verifyVC(verifiableCredential: VerifiableCredential, selfS
   // Define badge contract type
   if (verifiableCredential.templateHash) {
     if (type == 'EndorsementCredential') templateCategory = 4;
+    else if (verifiableCredential.credentialSubject.achievement.achievementType.replace('ext:', '') == 'Ticket')
+      templateCategory = 2;
     else
       templateCategory = ['Basic', 'Community', 'Participation', 'Membership'].indexOf(
         verifiableCredential.credentialSubject.achievement.achievementType.replace('ext:', '')
