@@ -1,4 +1,4 @@
-import Web3 from 'web3';
+import { Web3 } from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 import contractABI from './res/contractABI.json';
@@ -6,7 +6,7 @@ import contractABI from './res/contractABI.json';
 export class Web3Provider {
   private static instance: Web3Provider;
   web3: Web3;
-  contract: Contract;
+  contract: Contract<AbiItem[]>;
   abi: AbiItem[] = <AbiItem[]>contractABI;
   chainId: Number;
 
@@ -22,10 +22,10 @@ export class Web3Provider {
   public initialize(provider: string, contractAddress: string): void {
     this.web3 = new Web3(provider);
     this.contract = new this.web3.eth.Contract(this.abi, contractAddress);
-    this.web3.eth.getChainId().then((providerChainId) => (this.chainId = providerChainId));
+    this.web3.eth.getChainId().then((providerChainId) => (this.chainId = Number(providerChainId)));
   }
 
-  public getContract(): Contract {
+  public getContract(): Contract<AbiItem[]> {
     return this.contract;
   }
 

@@ -16,7 +16,7 @@ export function recoverAddress(signature: string, document: string): string {
   const s = '0x' + cleanSignature.slice(64, 128);
   const v = '0x' + cleanSignature.slice(128);
 
-  return Web3Provider.getInstance().web3.eth.accounts.recover({ messageHash, v, r, s });
+  return Web3Provider.getInstance().web3.eth.accounts.recover(messageHash, v, r, s, true);
 }
 
 export function hashSHA256(message: string): string {
