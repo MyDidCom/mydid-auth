@@ -165,15 +165,16 @@ export async function verifyVC(verifiableCredential: VerifiableCredential, selfS
                 );
               } else issuerAddress = didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0]);
 
-              const templateInfoValid = await isIssuerTemplate(
-                issuerAddress,
-                templateCategory,
-                verifiableCredential.templateHash
-              );
+              // Removed to handle off-chain templates
+              // const templateInfoValid = await isIssuerTemplate(
+              //   issuerAddress,
+              //   templateCategory,
+              //   verifiableCredential.templateHash
+              // );
 
-              if (!templateInfoValid) {
-                reject(`Can't retrieve template info from contract`);
-              }
+              // if (!templateInfoValid) {
+              //   reject(`Can't retrieve template info from contract`);
+              // }
 
               resolve({});
             }),
@@ -186,15 +187,15 @@ export async function verifyVC(verifiableCredential: VerifiableCredential, selfS
 
   // Add template contract info verification if community
   if (templateCategory == 1) {
-    const templateInfoValid = await isIssuerTemplate(
-      didToAddress(templateData.issuerDID),
-      templateCategory,
-      verifiableCredential.templateHash
-    );
-
-    if (!templateInfoValid) {
-      throw `Can't retrieve template info from contract`;
-    }
+    // Removed to handle off-chain templates
+    // const templateInfoValid = await isIssuerTemplate(
+    //   didToAddress(templateData.issuerDID),
+    //   templateCategory,
+    //   verifiableCredential.templateHash
+    // );
+    // if (!templateInfoValid) {
+    //   throw `Can't retrieve template info from contract`;
+    // }
   }
 
   // Validate badge content corresponding to badge template
@@ -263,12 +264,13 @@ export async function verifyVC(verifiableCredential: VerifiableCredential, selfS
           throw `Badge is not in delegation date range`;
         }
 
+        // Removed to handle universal templates
         // check if template issuerDID is same as delegation signer
-        if (
-          didToAddress(templateData.issuerDID.split('#')[0]) !=
-          didToAddress((verifiableCredential.issuer as Issuer).endorsement.proof.verificationMethod.split('#')[0])
-        )
-          throw `Template issuer doesn't match delegation signer`;
+        // if (
+        //   didToAddress(templateData.issuerDID.split('#')[0]) !=
+        //   didToAddress((verifiableCredential.issuer as Issuer).endorsement.proof.verificationMethod.split('#')[0])
+        // )
+        //   throw `Template issuer doesn't match delegation signer`;
 
         // check if template hash is allowed by delegation
         if (
@@ -279,13 +281,13 @@ export async function verifyVC(verifiableCredential: VerifiableCredential, selfS
         }
       } else {
         // there is no delegation
-
+        // Removed to handle universal templates
         // check if template issuerDID is same as badge signer
-        if (
-          didToAddress(templateData.issuerDID.split('#')[0]) !=
-          didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0])
-        )
-          throw `Template issuer doesn't match signer`;
+        // if (
+        //   didToAddress(templateData.issuerDID.split('#')[0]) !=
+        //   didToAddress(verifiableCredential.proof.verificationMethod.split('#')[0])
+        // )
+        //   throw `Template issuer doesn't match signer`;
       }
     }
   } else if (type == 'VerifiableCredential') {
