@@ -9,6 +9,21 @@ import bs58 from 'bs58';
 
 const RESOLVER_URL = 'https://resolver.mydid.eu/1.0/identifiers/';
 
+export function validateDelegationSignerBinding(verifiableCredential: VerifiableCredential): void {
+  const issuer = verifiableCredential.issuer as Issuer;
+  const endorsement = issuer && typeof issuer === 'object' ? issuer.endorsement : null;
+  const endorsementComment = endorsement?.credentialSubject?.endorsementComment;
+
+  if (endorsementComment?.split('::')[0] !== 'DELEGATION') return;
+
+  const badgeSignerDid = verifiableCredential.proof.verificationMethod.split('#')[0];
+  const delegatedDid = endorsement.credentialSubject.id;
+
+  if (didToAddress(badgeSignerDid) != didToAddress(delegatedDid)) {
+    throw `Badge signer doesn't match delegated DID`;
+  }
+}
+
 export async function verifyVerifiablePresentation(verifiablePresentation: VerifiablePresentation): Promise<boolean> {
   const { proof, ...VPWithoutProof } = verifiablePresentation;
 
@@ -77,6 +92,10 @@ export async function verifyVC(verifiableCredential: VerifiableCredential, selfS
   else if (verifiableCredential.type.length == 2 && verifiableCredential.type.indexOf('EndorsementCredential') != -1)
     type = 'EndorsementCredential';
   else throw `VC type not handled`;
+
+  // A valid delegation credential can only authorize the DID named as its
+  // subject. Do not allow it to be attached to a badge signed by another DID.
+  validateDelegationSignerBinding(verifiableCredential);
 
   // Define badge contract type
   if (verifiableCredential.templateHash) {
